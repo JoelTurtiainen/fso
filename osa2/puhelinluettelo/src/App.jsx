@@ -2,14 +2,18 @@ import { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      number: '045-1234567'
-    }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newSearch, setNewSearch] = useState('')
 
+  const personsToShow = newSearch
+    ? persons.filter(person => person.name.match(new RegExp(newSearch, "gi")))
+    : persons
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -26,9 +30,15 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <form onSubmit={addPerson}>
         <div>
+          filter shown with <input value={newSearch} onChange={(event) => { setNewSearch(event.target.value) }} />
+
+        </div>
+
+        <div>
+          <h2>add a new</h2>
           <div>
             name: <input value={newName} onChange={(event) => setNewName(event.target.value)} />
           </div>
@@ -41,7 +51,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map(({ name, number }, index) => <p key={index}> {name} {number} </p>)}
+      {personsToShow.map(({ name, number }, index) => <p key={index}> {name} {number} </p>)}
     </div>
   )
 
