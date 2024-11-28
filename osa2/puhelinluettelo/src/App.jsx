@@ -1,15 +1,19 @@
 import { useState } from 'react'
+import Filter from './components/Filter'
+import Persons from './components/Persons'
+import PersonForm from './components/PersonForm'
 
 const App = () => {
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [newSearch, setNewSearch] = useState('')
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
     { name: 'Ada Lovelace', number: '39-44-5323523' },
     { name: 'Dan Abramov', number: '12-43-234345' },
     { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [newSearch, setNewSearch] = useState('')
+
 
   const personsToShow = newSearch
     ? persons.filter(person => person.name.match(new RegExp(newSearch, "gi")))
@@ -30,31 +34,20 @@ const App = () => {
 
   return (
     <div>
-      <h1>Phonebook</h1>
-      <form onSubmit={addPerson}>
-        <div>
-          filter shown with <input value={newSearch} onChange={(event) => { setNewSearch(event.target.value) }} />
-
-        </div>
-
-        <div>
-          <h2>add a new</h2>
-          <div>
-            name: <input value={newName} onChange={(event) => setNewName(event.target.value)} />
-          </div>
-          <div>
-            number: <input value={newNumber} onChange={(event) => setNewNumber(event.target.value)} />
-          </div>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {personsToShow.map(({ name, number }, index) => <p key={index}> {name} {number} </p>)}
+      <h2>Phonebook</h2>
+      <Filter state={newSearch} setState={setNewSearch} />
+      <h3>add a new</h3>
+      <PersonForm
+        submitHandler={addPerson}
+        newName={newName}
+        setNewName={setNewName}
+        newNumber={newNumber}
+        setNewNumber={setNewNumber}
+      />
+      <h3>Numbers</h3>
+      <Persons personsToShow={personsToShow} />
     </div>
   )
-
 }
 
 export default App
