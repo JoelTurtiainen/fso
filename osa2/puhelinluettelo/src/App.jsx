@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
-import personService from './services/persons.js'
+import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [persons, setPersons] = useState([])
+  const [message, setMessage] = useState({ text: null })
 
   useEffect(() => {
     console.log("effect")
@@ -23,7 +25,7 @@ const App = () => {
 
   const personsToShow = newSearch
     ? persons.filter(person => person.name.match(new RegExp(newSearch, "gi")))
-    : persons
+    : persons;
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -36,19 +38,24 @@ const App = () => {
           .update(found.id, newPersonObj)
           .then(returnedPerson => {
             setPersons(persons.map(person => person.id !== found.id ? person : returnedPerson))
+            setMessage({ text: `Updated ${returnedPerson.name}` })
           })
-      }
-      return
+          .catch(() => {
+            setMessage({ text: `Information of ${newName} does not exist on the server anymore.`, error: true })
+          })
+      } else return
     } else {
       personService
         .create(newPersonObj)
         .then(returnedPerson => {
-          console.log(returnedPerson)
           setPersons(persons.concat(returnedPerson))
-          setNewNumber('')
-          setNewName('')
+          setMessage({ text: `Added ${returnedPerson.name}` })
         })
     }
+
+    setNewNumber('')
+    setNewName('')
+    setTimeout(() => setMessage({ text: null }), 3000)
   }
 
 
@@ -58,15 +65,21 @@ const App = () => {
       personService
         .remove(id)
         .then(deletedPerson => {
-          console.log(deletedPerson)
           setPersons(persons.filter(person => person.id !== deletedPerson.id))
+          setMessage({ text: `Deleted ${deletedPerson.name}` })
         })
+        .catch(() => {
+          setMessage({ text: `Information of ${selectedPerson.name} has already been removed from the server.`, error: true })
+        })
+        .finally(setTimeout(() => setMessage({ text: null }), 3000)
+        )
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter state={newSearch} setState={setNewSearch} />
       <h3>add a new</h3>
       <PersonForm
