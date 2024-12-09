@@ -61,6 +61,23 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
+app.put('/api/persons/:id', (request, response) => {
+  const body = request.body
+  const id = request.params.id
+  const rest = persons.filter(person => person.id !== id)
+
+  if (!persons.find(person => person.id === id)) {
+    return response.status(404).json()
+  }
+
+  if (!body.number || body.number.length < 1) {
+    return response.status(400).end()
+  }
+
+  persons = [...rest, body]
+  response.json(body)
+})
+
 app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id
   persons = persons.filter(person => person.id !== id)

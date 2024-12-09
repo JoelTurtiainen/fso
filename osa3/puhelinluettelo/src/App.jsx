@@ -29,8 +29,8 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const newPersonObj = { name: newName, number: newNumber }
     const found = persons.find(person => person.name === newName)
+    const newPersonObj = { name: newName, number: newNumber, id: found.id || null }
 
     if (found) {
       if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
@@ -40,9 +40,21 @@ const App = () => {
             setPersons(persons.map(person => person.id !== found.id ? person : returnedPerson))
             setMessage({ text: `Updated ${returnedPerson.name}` })
           })
-          .catch(() => {
-            setMessage({ text: `Information of ${newName} does not exist on the server anymore.`, error: true })
+          .catch(({ status }) => {
+            let errorMsg;
+            if (status === 400) {
+              errorMsg = 'Missing number'
+            } else if (status === 404) {
+              errorMsg = `Information of ${newName} does not exist on the server anymore.`
+              // Person was already removed so lets remove it from client 
+              setPersons(persons.filter(person => person.id !== found.id))
+            } else {
+              errorMsg = 'Unknown Error'
+            }
+
+            setMessage({ text: errorMsg, error: true })
           })
+
       } else return
     } else {
       personService
