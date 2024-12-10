@@ -30,7 +30,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     const found = persons.find(person => person.name === newName)
-    const newPersonObj = { name: newName, number: newNumber, id: found.id || null }
+    const newPersonObj = { name: newName, number: newNumber }
 
     if (found) {
       if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
@@ -60,8 +60,13 @@ const App = () => {
       personService
         .create(newPersonObj)
         .then(returnedPerson => {
+          console.log(returnedPerson)
           setPersons(persons.concat(returnedPerson))
           setMessage({ text: `Added ${returnedPerson.name}` })
+        })
+        .catch(({ response }) => {
+          console.log(response.data.error)
+          setMessage({ text: response.data.error, error: true })
         })
     }
 
@@ -69,7 +74,6 @@ const App = () => {
     setNewName('')
     setTimeout(() => setMessage({ text: null }), 3000)
   }
-
 
   const removePerson = (id) => {
     const selectedPerson = persons.find(person => person.id === id)

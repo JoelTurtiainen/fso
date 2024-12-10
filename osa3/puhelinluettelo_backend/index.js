@@ -6,7 +6,7 @@ const app = express()
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(express.json())
-app.use(express.static('dist'))
+//app.use(express.static('dist'))
 app.use(cors())
 
 morgan.token('body', function(req, res) {
@@ -62,21 +62,26 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
+// Changing existing users number
 app.put('/api/persons/:id', (request, response) => {
   const body = request.body
-  const id = request.params.id
-  const rest = persons.filter(person => person.id !== id)
+  const found = persons.find(person => person.name === request.body.name)
 
-  if (!persons.find(person => person.id === id)) {
+  if (!found) {
+    // Person has likely been removed already
     return response.status(404).json()
   }
 
   if (!body.number || body.number.length < 1) {
+    // Missing number
     return response.status(400).end()
   }
 
-  persons = [...rest, body]
-  response.json(body)
+  const newPerson = { ...found, number: request.body.number }
+  const rest = persons.filter(person => person.id !== found.id)
+
+  persons = [...rest, newPerson]
+  response.json(newPerson)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -122,7 +127,7 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
-const PORT = 3001
+const PORT = process.env.port || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
