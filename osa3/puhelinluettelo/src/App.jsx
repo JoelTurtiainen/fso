@@ -65,8 +65,8 @@ const App = () => {
           setMessage({ text: `Added ${returnedPerson.name}` })
         })
         .catch(({ response }) => {
-          console.log(response.data.error)
-          setMessage({ text: response.data.error, error: true })
+          setPersons(persons.concat(response.data))
+          setMessage({ text: 'Name is not unique', error: true })
         })
     }
 
