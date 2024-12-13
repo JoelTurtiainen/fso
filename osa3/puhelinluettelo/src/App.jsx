@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
-import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
 import Notification from './components/Notification'
@@ -64,9 +63,9 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setMessage({ text: `Added ${returnedPerson.name}` })
         })
-        .catch(({ response }) => {
-          setPersons(persons.concat(response.data))
-          setMessage({ text: 'Name is not unique', error: true })
+        .catch((error) => {
+          console.log(error.response.data)
+          setMessage({ text: error.response.data.error, error: true })
         })
     }
 
@@ -100,7 +99,13 @@ const App = () => {
         setNewNumber={setNewNumber}
       />
       <h3>Numbers</h3>
-      <Persons personsToShow={personsToShow} removeHandler={removePerson} />
+      <ul style={{ paddingInlineStart: 0 }}>
+        {personsToShow.map(person => {
+          return (
+            <li key={person.id}>{person.name} {person.number} <button type="button" onClick={() => removePerson(person.id)}>delete</button></li>
+          )
+        })}
+      </ul>
     </div>
   )
 }
