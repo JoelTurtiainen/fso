@@ -32,7 +32,7 @@ Person.find({}).then(result => {
   result.forEach(user => {
     console.log(`${user.name} ${user.number}`)
   })
-}).catch(error => next(error))
+}).catch(error => console.log(error))
 
 const cors = require('cors')
 
