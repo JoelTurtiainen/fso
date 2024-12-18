@@ -65,8 +65,37 @@ const totalLikes = (array) => {
     : array.reduce(reducer, 0)
 }
 
+const favoriteBlog = (array) => {
+  return array.reduce((previous, current) => {
+    return current.likes > previous.likes
+      ? current
+      : previous
+  }, { likes: 0 })
+}
+
+const mostBlogs = (array) => {
+  const blogs = array.reduce((previous, current) => {
+    const found = previous.find(o => o.author === current.author)
+    const filtered = previous.filter(o => o.author !== current.author)
+
+    return found
+      ? [...filtered, { ...found, blogs: found.blogs + 1 }]
+      : [...previous, { author: current.author, blogs: 1 }]
+
+
+  }, [])
+
+  return blogs.reduce((previous, current) => {
+    return current.blogs > previous.blogs
+      ? current
+      : previous
+  })
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  getBlogs
+  getBlogs,
+  favoriteBlog,
+  mostBlogs
 }
