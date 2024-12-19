@@ -37,4 +37,9 @@ describe('total likes', () => {
     const author = listHelper.mostBlogs(blogs)
     assert.strictEqual(author.blogs, 3)
   })
+
+  test('blogger with most likes is correct', () => {
+    const author = listHelper.mostLikes(blogs)
+    assert.strictEqual(author.likes, 17)
+  })
 })
