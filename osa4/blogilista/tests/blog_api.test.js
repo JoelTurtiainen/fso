@@ -7,6 +7,7 @@ const api = supertest(app)
 const { initialBlogs } = require('./test_data')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const { isNumber } = require('node:util')
 
 
 beforeEach(async () => {
@@ -34,6 +35,20 @@ test('returned blogs contain id', async () => {
   assert(blog == undefined)
 })
 
+test('setting default likes on missing blog', async () => {
+  const blogWithNolikes = {
+    title: 'Pineapple Pizza',
+    author: 'Pizzaman456',
+    url: 'pizzaman456reviews.com'
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(blogWithNolikes)
+    .expect(201)
+
+  assert(Number.isInteger(response.body.likes))
+})
 after(async () => {
   await mongoose.connection.close()
 })
