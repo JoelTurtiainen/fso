@@ -27,8 +27,11 @@ test('there are two blogs', async () => {
 })
 
 test('returned blogs contain id', async () => {
-  const response = await Blog.find({})
-  console.log(response[0].toJSON()) //TODO
+  const response = await api.get('/api/blogs')
+
+  const blog = response.body.find(blog => !blog.id);
+
+  assert(blog == undefined)
 })
 
 after(async () => {
