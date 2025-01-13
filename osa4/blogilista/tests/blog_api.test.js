@@ -49,6 +49,21 @@ test('setting default likes on missing blog', async () => {
 
   assert(Number.isInteger(response.body.likes))
 })
+
+test('rejecting blog with no title & url', async () => {
+  const invalidBlog = {
+    author: 'Pizzaman456',
+    likes: 0
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(invalidBlog)
+    .expect(400)
+
+  assert(response)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
