@@ -11,16 +11,16 @@ blogsRouter.post('/', async (request, response,) => {
   const body = request.body
   const user = await User.findById(body.userId)
 
-  if (!body.title || !body.url) {
+  if (!body.title || !body.url || !body.author) {
     return response.status(400).end()
   }
 
   const blog = new Blog({
+    url: body.url,
     title: body.title,
     author: body.author,
-    url: body.url,
-    likes: body.likes || 0,
-    userId: user._id
+    user: user._id,
+    likes: body.likes || 0
   })
 
   const savedBlog = await blog.save()
