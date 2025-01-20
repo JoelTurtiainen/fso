@@ -195,6 +195,7 @@ describe('when there is initially one user at db', () => {
 
       assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
+
     test('password is too short or missing', async () => {
       const usersAtStart = await helper.usersInDb()
 
@@ -213,7 +214,6 @@ describe('when there is initially one user at db', () => {
 
       assert.strictEqual(usersAtEnd.length, usersAtStart.length)
     })
-
   })
 })
 

@@ -20,6 +20,8 @@ blogsRouter.post('/', async (request, response,) => {
     return response.status(400)
   }
 
+  console.log(request.user)
+
   const blog = new Blog({
     url: body.url,
     title: body.title,
@@ -36,7 +38,7 @@ blogsRouter.post('/', async (request, response,) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  const decodedToken = await jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
