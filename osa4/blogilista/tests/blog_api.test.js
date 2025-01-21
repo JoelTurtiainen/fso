@@ -12,9 +12,10 @@ const helper = require('../tests/test_helper')
 const User = require('../models/user')
 const Blog = require('../models/blog')
 
+let TOKEN;
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
 
   await User.deleteMany({})
 
@@ -22,6 +23,14 @@ beforeEach(async () => {
   const user = new User({ username: 'root', passwordHash })
 
   await user.save()
+
+  TOKEN = (await api
+    .post('/api/login')
+    .send({ username: 'root', password: 'sekret' })
+    .expect('Content-Type', /application\/json/)).body.token
+
+  const initialBlogs = helper.initialBlogs.map(blog => ({ ...blog, user }))
+  await Blog.insertMany(initialBlogs)
 })
 
 test('blogs are returned as json', async () => {
@@ -55,6 +64,7 @@ test('setting default likes on missing blog', async () => {
 
   const response = await api
     .post('/api/blogs')
+    .set({ 'Authorization': 'Bearer ' + TOKEN })
     .send(blogWithNolikes)
     .expect(201)
 
@@ -83,6 +93,7 @@ test('deleting a blog works', async () => {
 
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set({ 'Authorization': 'Bearer ' + TOKEN })
     .expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
