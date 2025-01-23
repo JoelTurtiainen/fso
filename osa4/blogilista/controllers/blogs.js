@@ -17,7 +17,7 @@ blogsRouter.post('/', async (request, response,) => {
   const user = await User.findById(decodedToken.id)
 
   if (!body.title || !body.url || !body.author) {
-    return response.status(400)
+    return response.status(400).json({ error: 'invalid body' })
   }
 
   const blog = new Blog({
