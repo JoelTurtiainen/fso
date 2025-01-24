@@ -12,7 +12,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || null))
-  const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
+
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs))
@@ -43,22 +43,11 @@ const App = () => {
     }
   }
 
-  const handleBlogSubmit = async (event) => {
-    event.preventDefault()
+  const addBlog = async (blogObject) => {
     try {
-      const response = await blogService.create(newBlog, user)
-
-      // Clear input Fields
-      setNewBlog({ title: '', url: '', author: '' })
-
-      // Add newly created blog to DOM
-      setBlogs(blogs.concat(response))
-
-      // Notification message & Timeout 
-      setMessage({ text: `a new Blog ${response.title} by ${response.author} added`, error: false })
-      setTimeout(() => {
-        setMessage({ text: null })
-      }, 5000)
+      const returnedBlog = await blogService.create(blogObject, user)
+      setBlogs(blogs.concat(returnedBlog))
+      setMessage({ text: `a new Blog ${returnedBlog.title} by ${returnedBlog.author} added` })
     } catch ({ status }) {
       // Set Notification text & color based on returned status code
       if (status === 401) {
@@ -68,11 +57,11 @@ const App = () => {
       } else {
         setMessage({ text: 'Uh oh', error: true })
       }
-      // Timeout for Notification 
-      setTimeout(() => {
-        setMessage({ text: null })
-      }, 5000)
     }
+    // Timeout for Notification 
+    setTimeout(() => {
+      setMessage({ text: null })
+    }, 5000)
   }
 
   if (user === null) {
@@ -108,18 +97,15 @@ const App = () => {
   return (
     <div>
       < Notification message={message} />
-      <h2>blogs</h2>
+
 
       <p>{user.name} logged in <button onClick={() => setUser(null)}>logout</button></p>
 
       <Togglable buttonLabel="New note">
-        <BlogForm
-          newBlog={newBlog}
-          setNewBlog={setNewBlog}
-          handleSubmit={handleBlogSubmit}
-        />
+        <BlogForm createBlog={addBlog} />
       </Togglable>
 
+      <h2>blogs</h2>
       {blogs.map((blog) => <Blog key={blog.id} blog={blog} />)}
     </div>
   )
