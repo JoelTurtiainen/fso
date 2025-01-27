@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
@@ -47,6 +47,7 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(blogObject, user)
       setBlogs(blogs.concat(returnedBlog))
+      blogFormRef.current.toggleVisibility()
       setMessage({ text: `a new Blog ${returnedBlog.title} by ${returnedBlog.author} added` })
     } catch ({ status }) {
       // Set Notification text & color based on returned status code
@@ -63,6 +64,16 @@ const App = () => {
       setMessage({ text: null })
     }, 5000)
   }
+
+  const updateBlog = async (blogObject) => {
+    try {
+      const response = await blogService.update(blogObject, user)
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
+  const blogFormRef = useRef()
 
   if (user === null) {
     return (
@@ -101,12 +112,12 @@ const App = () => {
 
       <p>{user.name} logged in <button onClick={() => setUser(null)}>logout</button></p>
 
-      <Togglable buttonLabel="New note">
+      <Togglable buttonLabel="New note" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
 
       <h2>blogs</h2>
-      {blogs.map((blog) => <Blog key={blog.id} blog={blog} />)}
+      {blogs.map((blog) => <Blog updateBlog={updateBlog} key={blog.id} blog={blog} />)}
     </div>
   )
 }
