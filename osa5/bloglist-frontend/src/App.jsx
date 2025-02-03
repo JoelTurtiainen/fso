@@ -27,7 +27,7 @@ const App = () => {
 
     try {
       const user = await loginService.login({ username, password })
-      setUser(user) // Save user to localstorage 
+      setUser(user) // Save user to localstorage
       setUsername('')
       setPassword('')
     } catch (exception) {
