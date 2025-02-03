@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
-import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Blog from './components/Blog'
+import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 
@@ -26,21 +26,17 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
-        username, password,
-      })
-      // Save user to localstorage 
-      setUser(user)
-      // Clear input fields
+      const user = await loginService.login({ username, password })
+      setUser(user) // Save user to localstorage 
       setUsername('')
       setPassword('')
     } catch (exception) {
-      // Notification message & Timeout 
       setMessage({ text: 'wrong username or password', error: true })
-      setTimeout(() => {
-        setMessage({ text: null })
-      }, 5000)
     }
+
+    setTimeout(() => {
+      setMessage({ text: null })
+    }, 5000)
   }
 
   const addBlog = async (blogObject) => {
@@ -49,8 +45,8 @@ const App = () => {
       setBlogs(blogs.concat(returnedBlog))
       blogFormRef.current.toggleVisibility()
       setMessage({ text: `a new Blog ${returnedBlog.title} by ${returnedBlog.author} added` })
+
     } catch ({ status }) {
-      // Set Notification text & color based on returned status code
       if (status === 401) {
         setMessage({ text: 'Token Expired', error: true })
       } else if (status === 400) {
@@ -59,18 +55,41 @@ const App = () => {
         setMessage({ text: 'Uh oh', error: true })
       }
     }
-    // Timeout for Notification 
+
     setTimeout(() => {
       setMessage({ text: null })
     }, 5000)
   }
 
   const updateBlog = async (blogObject) => {
+    // Only used for updating likes at the moment
     try {
-      const response = await blogService.update(blogObject, user)
+      await blogService.update(blogObject, user)
     } catch (exception) {
       console.log(exception)
     }
+  }
+
+  const removeBlog = async (blogObject) => {
+    if (!confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)) return
+
+    try {
+      await blogService.remove(blogObject.id, user)
+      setBlogs(blogs.filter(blog => blog !== blogObject))
+      setMessage({ text: `Removed blog ${blogObject.title} by ${blogObject.author}` })
+    } catch ({ status }) {
+      if (status === 401 && user.username === blogObject.user.username) {
+        setMessage({ text: 'Token Expired', error: true })
+      } else if (status === 401) {
+        setMessage({ text: 'Could not delete the blog, Are you the author?', error: true })
+      } else {
+        setMessage({ text: 'Uh oh', error: true })
+      }
+    }
+
+    setTimeout(() => {
+      setMessage({ text: null })
+    }, 5000)
   }
 
   const blogFormRef = useRef()
@@ -107,20 +126,23 @@ const App = () => {
 
   return (
     <div>
+      <h2>blogs</h2>
       < Notification message={message} />
-
-
       <p>{user.name} logged in <button onClick={() => setUser(null)}>logout</button></p>
-
-      <Togglable buttonLabel="New note" ref={blogFormRef}>
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-
-      <h2>blogs</h2>
-      {
-        blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) => <Blog updateBlog={updateBlog} key={blog.id} blog={blog} />)
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) =>
+          <Blog
+            updateBlog={updateBlog}
+            removeBlog={removeBlog}
+            isOwner={user.username === blog.user.username}
+            key={blog.id}
+            blog={blog}
+          />
+        )
       }
     </div>
   )

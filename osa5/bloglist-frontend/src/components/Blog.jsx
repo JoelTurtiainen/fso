@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
   const [visible, setVisible] = useState(false)
 
   const showWhenVisible = { display: visible ? '' : 'none' }
@@ -20,7 +20,13 @@ const Blog = ({ blog, updateBlog }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
+  }
 
+  const btnRmStyle = {
+    backgroundColor: '#008CBA',
+    borderRadius: '5px',
+    border: '1px solid black',
+    aspectRatio: '4/1'
   }
 
   return (
@@ -32,6 +38,7 @@ const Blog = ({ blog, updateBlog }) => {
         <li><a href={blog.url}>{blog.url}</a></li>
         <li>likes {blog.likes} <button onClick={addLike}>like</button></li>
         <li>{blog.user.name}</li>
+        {isOwner ? <li><button onClick={() => removeBlog(blog)} style={btnRmStyle}>remove</button></li> : ''}
       </ul>
     </div>
   )
