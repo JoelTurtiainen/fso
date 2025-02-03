@@ -28,3 +28,8 @@
   border: 1px solid black;
   aspect-ratio: 4/1;
 }
+
+.open {
+  transition: height 200ms ease-out;
+  overflow: hidden;
+}

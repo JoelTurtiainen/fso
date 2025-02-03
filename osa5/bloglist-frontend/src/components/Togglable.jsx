@@ -1,5 +1,6 @@
 import { PropTypes } from 'prop-types'
 import { useState, useImperativeHandle, forwardRef } from 'react'
+import styles from '../style.module.css'
 
 const Togglable = forwardRef((props, ref) => {
 
@@ -23,7 +24,7 @@ const Togglable = forwardRef((props, ref) => {
       <div style={hideWhenVisible}>
         <button onClick={toggleVisibility}>{props.buttonLabel}</button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='togglableContent' >
         {props.children}
         <button onClick={toggleVisibility}>cancel</button>
       </div>
