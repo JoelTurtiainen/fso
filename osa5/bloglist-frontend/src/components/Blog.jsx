@@ -1,4 +1,6 @@
+import PropTypes from 'prop-types'
 import { useState } from 'react'
+import styles from '../style.module.css'
 
 const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
   const [visible, setVisible] = useState(false)
@@ -14,34 +16,25 @@ const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
     updateBlog({ ...blog, likes: blog.likes + 1 })
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
-  const btnRmStyle = {
-    backgroundColor: '#008CBA',
-    borderRadius: '5px',
-    border: '1px solid black',
-    aspectRatio: '4/1'
-  }
-
   return (
-    <div style={blogStyle}>
-      <div>
-        {blog.title} {blog.author} <button onClick={toggleVisibility}>{buttonText}</button>
-      </div>
-      <ul style={{ ...showWhenVisible, listStyleType: 'none', paddingLeft: '0.5em', marginBlock: '0.2em' }}>
+    <div className={styles.blog}>
+      <ul className={styles.title}>
+        <li>{blog.title}</li>
+        <li>{blog.author}</li>
+        <li><button onClick={toggleVisibility}>{buttonText}</button></li>
+      </ul>
+      <ul style={showWhenVisible} >
         <li><a href={blog.url}>{blog.url}</a></li>
         <li>likes {blog.likes} <button onClick={addLike}>like</button></li>
         <li>{blog.user.name}</li>
-        {isOwner ? <li><button onClick={() => removeBlog(blog)} style={btnRmStyle}>remove</button></li> : ''}
+        {isOwner ? <li><button onClick={() => removeBlog(blog)} className={styles.btnRemove}>remove</button></li> : ''}
       </ul>
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired
 }
 
 export default Blog
