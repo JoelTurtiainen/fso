@@ -105,7 +105,7 @@ const App = () => {
             <input
               type="text"
               value={username}
-              name="Username"
+              aria-label="Username"
               onChange={({ target }) => setUsername(target.value)}
             />
           </div>
@@ -114,7 +114,7 @@ const App = () => {
             <input
               type="password"
               value={password}
-              name="Password"
+              aria-label="Password"
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
