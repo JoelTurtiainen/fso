@@ -103,6 +103,7 @@ const App = () => {
           <div>
             username
             <input
+              data-testid='username'
               type="text"
               value={username}
               aria-label="Username"
@@ -112,6 +113,7 @@ const App = () => {
           <div>
             password
             <input
+              data-testid='password'
               type="password"
               value={password}
               aria-label="Password"
@@ -132,18 +134,20 @@ const App = () => {
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) =>
-          <Blog
-            updateBlog={updateBlog}
-            removeBlog={removeBlog}
-            isOwner={user.username === blog.user.username}
-            key={blog.id}
-            blog={blog}
-          />
-        )
-      }
+      <div data-testid='blogListing'>
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) =>
+            <Blog
+              updateBlog={updateBlog}
+              removeBlog={removeBlog}
+              isOwner={user.username === blog.user.username}
+              key={blog.id}
+              blog={blog}
+            />
+          )
+        }
+      </div>
     </div>
   )
 }
