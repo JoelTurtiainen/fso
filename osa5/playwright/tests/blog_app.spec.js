@@ -14,8 +14,6 @@ describe('Blog app', () => {
       }
     })
 
-
-
     await page.goto('/')
   })
 
@@ -59,6 +57,23 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'show' }).click()
       await page.getByRole('button', { name: 'remove' }).click()
       await expect(page.getByText('Removed blog Test Blog Title')).toBeVisible()
+    })
+
+    test('blog remove button is only visible for the blog owner', async ({ page, request }) => {
+      await request.post('/api/users', {
+        data: {
+          name: 'C. Wellington',
+          username: 'wellington',
+          password: 'abc123'
+        }
+      })
+
+      await createBlog(page, { title: 'Test Blog Title', author: 'P. Wrightington', url: 'google.com' })
+      await expect(page.getByText(/^Test Blog Title/).last()).toBeVisible()
+      await page.getByRole('button', { name: 'logout' }).click()
+      await loginWith(page, 'wellington', 'abc123')
+      await page.getByRole('button', { name: 'show' }).click()
+      await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
     })
   })
 })
