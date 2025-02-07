@@ -75,5 +75,18 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'show' }).click()
       await expect(page.getByRole('button', { name: 'remove' })).toBeHidden()
     })
+
+    test('blogs are sorted from likes in descending order', async ({ page }) => {
+      await createBlog(page, { title: 'Test Blog One', author: 'P. Wrightington', url: 'google.com' })
+      await expect(page.getByText(/^Test Blog One/).last()).toBeVisible()
+
+      await createBlog(page, { title: 'Test Blog Two', author: 'Jones Wellington', url: 'google.com' })
+      await expect(page.getByText(/^Test Blog Two/).last()).toBeVisible()
+
+      await page.getByRole('button', { name: 'show' }).last().click()
+      await page.getByRole('button', { name: 'like' }).last().click()
+
+      await expect(page.getByText(/^Test Blog/).first()).toHaveText('Test Blog Two')
+    })
   })
 })
