@@ -47,14 +47,18 @@ describe('Blog app', () => {
     })
 
     test('a blog can be liked', async ({ page }) => {
-      page.on('console', (msg) => {
-        console.log(msg);
-      });
-
       await createBlog(page, { title: 'Test Blog Title', author: 'P. Wrightington', url: 'google.com' })
       await page.getByRole('button', { name: 'show' }).click()
       await page.getByRole('button', { name: 'like' }).click()
       await expect(page.getByText(/^likes 1/)).toBeVisible()
+    })
+
+    test('a blog can be deleted', async ({ page }) => {
+      page.on('dialog', dialog => dialog.accept())
+      await createBlog(page, { title: 'Test Blog Title', author: 'P. Wrightington', url: 'google.com' })
+      await page.getByRole('button', { name: 'show' }).click()
+      await page.getByRole('button', { name: 'remove' }).click()
+      await expect(page.getByText('Removed blog Test Blog Title')).toBeVisible()
     })
   })
 })
