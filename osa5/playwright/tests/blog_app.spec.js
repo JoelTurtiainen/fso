@@ -2,9 +2,10 @@ const { test, expect, describe, beforeEach } = require('@playwright/test')
 const { loginWith, createBlog } = require('./helper')
 
 
+
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
-    //await request.post('/api/testing/reset')
+    await request.post('/api/testing/reset')
     await request.post('/api/users', {
       data: {
         name: 'P. Wrightington',
@@ -12,6 +13,8 @@ describe('Blog app', () => {
         password: '12345'
       }
     })
+
+
 
     await page.goto('/')
   })
@@ -43,9 +46,15 @@ describe('Blog app', () => {
       await expect(page.getByText(/^Test Blog Title/).last()).toBeVisible()
     })
 
-    //test('a blog can be liked', async ({ page }) => {
-    //  const locator = page.getByTestId('blogListing')
-    //  console.log(locator)
-    //})
+    test('a blog can be liked', async ({ page }) => {
+      page.on('console', (msg) => {
+        console.log(msg);
+      });
+
+      await createBlog(page, { title: 'Test Blog Title', author: 'P. Wrightington', url: 'google.com' })
+      await page.getByRole('button', { name: 'show' }).click()
+      await page.getByRole('button', { name: 'like' }).click()
+      await expect(page.getByText(/^likes 1/)).toBeVisible()
+    })
   })
 })
