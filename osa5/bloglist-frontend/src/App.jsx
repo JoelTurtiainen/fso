@@ -64,7 +64,8 @@ const App = () => {
   const updateBlog = async (blogObject) => {
     // Only used for updating likes at the moment
     try {
-      await blogService.update(blogObject, user)
+      const response = await blogService.update(blogObject, user)
+      setBlogs(blogs.filter((blog) => { blog !== blogObject }).concat({ ...response, user }))
     } catch (exception) {
       console.log(exception)
     }
