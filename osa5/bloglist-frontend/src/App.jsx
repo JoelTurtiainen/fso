@@ -65,7 +65,9 @@ const App = () => {
     // Only used for updating likes at the moment
     try {
       const response = await blogService.update(blogObject, user)
-      setBlogs(blogs.filter((blog) => { blog !== blogObject }).concat({ ...response, user }))
+      console.log(response.id)
+      setBlogs(blogs.map((blog) => blog.id !== response.id ? blog : { ...response, user }))
+      console.log(blogs)
     } catch (exception) {
       console.log(exception)
     }
@@ -135,20 +137,18 @@ const App = () => {
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      <div data-testid='blogListing'>
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) =>
-            <Blog
-              updateBlog={updateBlog}
-              removeBlog={removeBlog}
-              isOwner={user.username === blog.user.username}
-              key={blog.id}
-              blog={blog}
-            />
-          )
-        }
-      </div>
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) =>
+          <Blog
+            updateBlog={updateBlog}
+            removeBlog={removeBlog}
+            isOwner={user.username === blog.user.username}
+            key={blog.id}
+            blog={blog}
+          />
+        )
+      }
     </div>
   )
 }
