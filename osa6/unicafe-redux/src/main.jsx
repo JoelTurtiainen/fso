@@ -15,8 +15,8 @@ const App = () => {
 
   return (
     <div>
-      <button onClick={good}>good</button> 
-      <button>ok</button> 
+      <button onClick={good}>good</button>
+      <button>ok</button>
       <button>bad</button>
       <button>reset stats</button>
       <div>good {store.getState().good}</div>
