@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { voteAnecdote } from "../reducers/anecdoteReducer"
 
+// eslint-disable-next-line react/prop-types
 const Anecdote = ({ id, content, votes, handler }) => {
   return (
     <div>
@@ -17,7 +18,15 @@ const Anecdote = ({ id, content, votes, handler }) => {
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
-  const anecdotes = useSelector(state => state)
+
+  const anecdotes = useSelector(state => {
+    if (state.filter === 'ALL') {
+      return state.anecdotes
+    }
+    const regex = new RegExp(state.filter, "gi")
+    return state.anecdotes.filter(anecdote => anecdote.content.match(regex))
+  })
+
 
   return (
     <div>
