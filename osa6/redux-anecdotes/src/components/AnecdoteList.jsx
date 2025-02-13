@@ -9,7 +9,7 @@ const Anecdote = ({ id, content, votes, handler }) => {
       </div>
       <div>
         has {votes}
-        <button onClick={() => handler(id)}>vote</button>
+        <button onClick={handler}>vote</button>
       </div>
     </div>
   )
@@ -26,6 +26,13 @@ const AnecdoteList = () => {
     return state.anecdotes.filter(anecdote => anecdote.content.match(regex))
   })
 
+  const anecdoteHandler = (id, content) => {
+    dispatch({ type: 'anecdotes/voteAnecdote', payload: id })
+    dispatch({ type: 'notification/setNotification', payload: `you voted '${content}'` })
+    setTimeout(() => {
+      dispatch({ type: 'notification/clearNotification' })
+    }, 5000)
+  }
 
   return (
     <div>
@@ -35,7 +42,7 @@ const AnecdoteList = () => {
             key={id}
             content={content}
             votes={votes}
-            handler={() => dispatch({ type: 'anecdotes/voteAnecdote', payload: id })}
+            handler={() => anecdoteHandler(id, content)}
           />
         )}
     </div>

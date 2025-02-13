@@ -7,9 +7,13 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.content.value
     event.target.content.value = ''
-    return (
-      dispatch({ type: 'anecdotes/createAnecdote', payload: content })
-    )
+
+    dispatch({ type: 'anecdotes/createAnecdote', payload: content })
+    dispatch({ type: 'notification/setNotification', payload: `you created '${content}'` })
+
+    setTimeout(() => {
+      dispatch({ type: 'notification/clearNotification' })
+    }, 5000)
   }
 
   return (
