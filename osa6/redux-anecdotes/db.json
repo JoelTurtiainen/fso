@@ -1,14 +1,9 @@
 {
   "anecdotes": [
     {
-      "content": "If it hurts, do it more often",
-      "id": "1",
-      "votes": 0
-    },
-    {
       "content": "Adding manpower to a late software project makes it later!",
       "id": "2",
-      "votes": 0
+      "votes": 2
     },
     {
       "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
@@ -43,22 +38,52 @@
     {
       "id": "6aa8",
       "content": "c",
-      "votes": 0
+      "votes": 12
     },
     {
-      "id": "0537",
-      "content": "a",
-      "votes": 0
-    },
-    {
-      "id": "93d6",
-      "content": "a",
-      "votes": 0
-    },
-    {
-      "id": "27c3",
-      "content": "b",
-      "votes": 0
+      "data": {
+        "id": "0537",
+        "content": "a",
+        "votes": 0
+      },
+      "status": 200,
+      "statusText": "OK",
+      "headers": {
+        "content-length": "50",
+        "content-type": "application/json"
+      },
+      "config": {
+        "transitional": {
+          "silentJSONParsing": true,
+          "forcedJSONParsing": true,
+          "clarifyTimeoutError": false
+        },
+        "adapter": [
+          "xhr",
+          "http",
+          "fetch"
+        ],
+        "transformRequest": [
+          null
+        ],
+        "transformResponse": [
+          null
+        ],
+        "timeout": 0,
+        "xsrfCookieName": "XSRF-TOKEN",
+        "xsrfHeaderName": "X-XSRF-TOKEN",
+        "maxContentLength": -1,
+        "maxBodyLength": -1,
+        "env": {},
+        "headers": {
+          "Accept": "application/json, text/plain, */*"
+        },
+        "method": "get",
+        "url": "http://localhost:3001/anecdotes/0537"
+      },
+      "request": {},
+      "votes": null,
+      "id": "0537"
     }
   ]
 }
