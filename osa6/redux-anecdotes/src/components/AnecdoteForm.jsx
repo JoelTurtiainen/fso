@@ -4,7 +4,7 @@ import anecdoteService from '../services/anecdotes'
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
 
-  const create = async (event) => {
+  const addAnecdote = async (event) => {
     event.preventDefault()
     const content = event.target.content.value
     event.target.content.value = ''
@@ -19,7 +19,7 @@ const AnecdoteForm = () => {
   }
 
   return (
-    <form onSubmit={create}>
+    <form onSubmit={addAnecdote}>
       <h2>create new</h2>
       <div><input name='content' /></div>
       <button type='submit'>create</button>
