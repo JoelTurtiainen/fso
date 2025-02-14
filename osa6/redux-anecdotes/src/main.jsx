@@ -4,7 +4,6 @@ import store from './store'
 
 import App from './App'
 
-console.log(store.getState())
 store.subscribe(() => console.log(store.getState()))
 
 ReactDOM.createRoot(document.getElementById('root')).render(
