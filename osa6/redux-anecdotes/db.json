@@ -3,7 +3,7 @@
     {
       "content": "Adding manpower to a late software project makes it later!",
       "id": "2",
-      "votes": 2
+      "votes": 3
     },
     {
       "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
@@ -24,66 +24,6 @@
       "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
       "id": "6",
       "votes": 0
-    },
-    {
-      "id": "fbd4",
-      "content": "v",
-      "votes": 0
-    },
-    {
-      "id": "8ee7",
-      "content": "a",
-      "votes": 0
-    },
-    {
-      "id": "6aa8",
-      "content": "c",
-      "votes": 12
-    },
-    {
-      "data": {
-        "id": "0537",
-        "content": "a",
-        "votes": 0
-      },
-      "status": 200,
-      "statusText": "OK",
-      "headers": {
-        "content-length": "50",
-        "content-type": "application/json"
-      },
-      "config": {
-        "transitional": {
-          "silentJSONParsing": true,
-          "forcedJSONParsing": true,
-          "clarifyTimeoutError": false
-        },
-        "adapter": [
-          "xhr",
-          "http",
-          "fetch"
-        ],
-        "transformRequest": [
-          null
-        ],
-        "transformResponse": [
-          null
-        ],
-        "timeout": 0,
-        "xsrfCookieName": "XSRF-TOKEN",
-        "xsrfHeaderName": "X-XSRF-TOKEN",
-        "maxContentLength": -1,
-        "maxBodyLength": -1,
-        "env": {},
-        "headers": {
-          "Accept": "application/json, text/plain, */*"
-        },
-        "method": "get",
-        "url": "http://localhost:3001/anecdotes/0537"
-      },
-      "request": {},
-      "votes": null,
-      "id": "0537"
     }
   ]
 }
