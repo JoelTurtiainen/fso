@@ -25,3 +25,4 @@ testing
 *.njsproj
 *.sln
 *.sw?
+osa6/query-anecdotes/db.json
