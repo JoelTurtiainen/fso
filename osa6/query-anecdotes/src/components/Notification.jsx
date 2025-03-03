@@ -8,7 +8,7 @@ const Notification = () => {
     marginBottom: 5
   }
 
-  //if (true) return null
+  if (!notification) return
 
   return (
     <div style={style}>

@@ -1,7 +1,7 @@
 import { createContext, useReducer, useContext } from 'react'
+let timeoutID;
 
 const notificationReducer = (state, action) => {
-  const anecdote = action.anecdote.content
   let suffix = ''
 
   switch (action.type) {
@@ -20,13 +20,13 @@ const notificationReducer = (state, action) => {
       return state
   }
 
-  return `$'{anecdote}' ${suffix}`
+  return `'${action.content}' ${suffix}`
 }
 
 const NotificationContext = createContext()
 
 export const NotificationContextProvider = (props) => {
-  const [notification, notificationDispatch] = useReducer(notificationReducer, 'test')
+  const [notification, notificationDispatch] = useReducer(notificationReducer, null)
 
   return (
     <NotificationContext.Provider value={[notification, notificationDispatch]}>
@@ -42,17 +42,15 @@ export const useNotificationValue = () => {
 
 export const useNotificationDispatch = () => {
   const notificationAndDispatch = useContext(NotificationContext)
-  return notificationAndDispatch[1]
-}
+  clearTimeout(timeoutID)
 
-export const setNotification = (content, timeout = 1) => {
-  return async dispatch => {
-    dispatch({ type: 'ADD', content })
-
-    setTimeout(() => {
-      dispatch({ type: 'CLEAR' })
-    }, timeout * 1000)
+  if (notificationAndDispatch[0]) {
+    timeoutID = setTimeout(() => {
+      notificationAndDispatch[1]({ type: 'CLEAR' })
+    }, 5000)
   }
+
+  return notificationAndDispatch[1]
 }
 
 export default NotificationContext
