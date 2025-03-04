@@ -8,14 +8,13 @@ const notificationReducer = (state, action) => {
     case "ADD":
       suffix = `added`
       break;
-    case "REMOVE":
-      suffix = `removed`
-      break;
     case "VOTE":
       suffix = `voted`
       break;
     case "CLEAR":
-      return
+      return null
+    case "ERROR":
+      return action.content
     default:
       return state
   }

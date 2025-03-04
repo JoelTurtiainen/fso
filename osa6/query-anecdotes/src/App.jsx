@@ -20,6 +20,7 @@ const App = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
     }
+
   })
 
   const handleVote = (anecdote) => {
