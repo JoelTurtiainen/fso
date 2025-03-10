@@ -5,14 +5,15 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import { setNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
-  const [message, setMessage] = useState({ text: null })
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || null))
-
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs))
@@ -31,12 +32,8 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessage({ text: 'wrong username or password', error: true })
+      dispatch(setNotification('wrong username or password'))
     }
-
-    setTimeout(() => {
-      setMessage({ text: null })
-    }, 5000)
   }
 
   const addBlog = async (blogObject) => {
@@ -44,30 +41,24 @@ const App = () => {
       const returnedBlog = await blogService.create(blogObject, user)
       setBlogs(blogs.concat({ ...returnedBlog, user }))
       blogFormRef.current.toggleVisibility()
-      setMessage({ text: `a new Blog ${returnedBlog.title} by ${returnedBlog.author} added` })
-
+      dispatch(setNotification(`a new Blog ${returnedBlog.title} by ${returnedBlog.author} added`))
     } catch ({ status }) {
       if (status === 401) {
-        setMessage({ text: 'Token Expired', error: true })
+        dispatch(setNotification('Token Expired'))
       } else if (status === 400) {
-        setMessage({ text: 'Invalid blog body', error: true })
+        dispatch(setNotification('Invalid blog body'))
       } else {
-        setMessage({ text: 'Uh oh', error: true })
+        dispatch(setNotification('Uh oh'))
       }
     }
-
-    setTimeout(() => {
-      setMessage({ text: null })
-    }, 5000)
   }
 
   const updateBlog = async (blogObject) => {
     // Only used for updating likes at the moment
     try {
       const response = await blogService.update(blogObject, user)
-      console.log(response.id)
       setBlogs(blogs.map((blog) => blog.id !== response.id ? blog : { ...response, user }))
-      console.log(blogs)
+      dispatch(setNotification(`liked blog '${blogObject.title}'`))
     } catch (exception) {
       console.log(exception)
     }
@@ -79,20 +70,17 @@ const App = () => {
     try {
       await blogService.remove(blogObject.id, user)
       setBlogs(blogs.filter(blog => blog !== blogObject))
-      setMessage({ text: `Removed blog ${blogObject.title} by ${blogObject.author}` })
+
+      dispatch(setNotification(`Removed blog ${blogObject.title} by ${blogObject.author}`))
     } catch ({ status }) {
       if (status === 401 && user.username === blogObject.user.username) {
-        setMessage({ text: 'Token Expired', error: true })
+        dispatch(setNotification('Token Expired'))
       } else if (status === 401) {
-        setMessage({ text: 'Could not delete the blog, Are you the author?', error: true })
+        dispatch(setNotification('Could not delete the blog, Are you the author?'))
       } else {
-        setMessage({ text: 'Uh oh', error: true })
+        dispatch(setNotification('Uh oh'))
       }
     }
-
-    setTimeout(() => {
-      setMessage({ text: null })
-    }, 5000)
   }
 
   const blogFormRef = useRef()
@@ -100,7 +88,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        < Notification message={message} />
+        < Notification />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -132,7 +120,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      < Notification message={message} />
+      <Notification />
       <p>{user.name} logged in <button onClick={() => setUser(null)}>logout</button></p>
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
