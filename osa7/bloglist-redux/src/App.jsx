@@ -1,18 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
-import blogService from './services/blogs'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
+import { initializeBlogs } from './reducers/blogReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || null))
-  const [blogs, setBlogs] = useState([])
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
-  }, [])
+    dispatch(initializeBlogs())
+  })
 
   useEffect(() => {
     localStorage.setItem('user', JSON.stringify(user))
@@ -38,9 +39,9 @@ const App = () => {
       <Notification />
       <p>{user.name} logged in <button onClick={() => setUser(null)}>logout</button></p>
       <Togglable buttonLabel="create new blog" ref={ref}>
-        <BlogForm blogs={blogs} setBlogs={setBlogs} user={user} ref={ref} />
+        <BlogForm user={user} ref={ref} />
       </Togglable>
-      <BlogList user={user} blogs={blogs} setBlogs={setBlogs} />
+      <BlogList user={user} />
     </div>
   )
 }

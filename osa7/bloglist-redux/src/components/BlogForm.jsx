@@ -1,23 +1,21 @@
 import { useDispatch } from 'react-redux'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { setNotification } from '../reducers/notificationReducer'
-import blogService from '../services/blogs'
+import { createBlog } from '../reducers/blogReducer'
 
-const BlogForm = ({ user, blogs, setBlogs, ref }) => {
+const BlogForm = ({ ref }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
   const dispatch = useDispatch()
-  console.log(ref)
 
   const newBlogHandler = async (event) => {
     event.preventDefault()
     let msg
 
     try {
-      const returnedBlog = await blogService.create(newBlog, user)
-      setBlogs(blogs.concat({ ...returnedBlog, user }))
+      dispatch(createBlog(newBlog))
       setNewBlog({ title: '', url: '', author: '' })
 
-      msg = `a new Blog ${returnedBlog.title} by ${returnedBlog.author} added`
+      msg = `a new Blog ${newBlog.title} by ${newBlog.author} added`
       ref.current.toggleVisibility()
     } catch ({ status }) {
       if (status === 401) {

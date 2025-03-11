@@ -1,49 +1,50 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import blogService from '../services/blogs'
 import Blog from './Blog'
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
 
-const BlogList = ({ user, blogs, setBlogs }) => {
+const BlogList = ({ user }) => {
   const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
+  console.log(blogs)
 
-  const updateBlog = async (blogObject) => {
+  const updateHandler = async (blogObject) => {
     // Only used for updating likes at the moment
     try {
-      const response = await blogService.update(blogObject, user)
-      setBlogs(blogs.map((blog) => blog.id !== response.id ? blog : { ...response, user }))
+      dispatch(likeBlog(blogObject.id))
       dispatch(setNotification(`liked blog '${blogObject.title}'`))
     } catch (exception) {
       console.log(exception)
     }
   }
 
-  const removeBlog = async (blogObject) => {
+  const removeHandler = async (blogObject) => {
     if (!confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)) return
+    let msg
 
     try {
-      await blogService.remove(blogObject.id, user)
-      setBlogs(blogs.filter(blog => blog !== blogObject))
-
-      dispatch(setNotification(`Removed blog ${blogObject.title} by ${blogObject.author}`))
+      dispatch(removeBlog(blogObject.id))
+      msg = `Removed blog ${blogObject.title} by ${blogObject.author}`
     } catch ({ status }) {
       if (status === 401 && user.username === blogObject.user.username) {
-        dispatch(setNotification('Token Expired'))
+        msg = 'Token Expired'
       } else if (status === 401) {
-        dispatch(setNotification('Could not delete the blog, Are you the author?'))
+        msg = 'Could not delete the blog, Are you the author?'
       } else {
-        dispatch(setNotification('Uh oh'))
+        msg = 'Uh oh'
       }
     }
+    dispatch(setNotification(msg))
   }
 
   return (
     <div>
-      {blogs
+      {[...blogs]
         .sort((a, b) => b.likes - a.likes)
         .map((blog) =>
           <Blog
-            updateBlog={updateBlog}
-            removeBlog={removeBlog}
+            updateBlog={updateHandler}
+            removeBlog={removeHandler}
             isOwner={user.username === blog.user.username}
             key={blog.id}
             blog={blog}

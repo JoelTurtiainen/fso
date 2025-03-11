@@ -12,7 +12,8 @@ const getAll = async () => {
   return response.data
 }
 
-const create = async (newObject, user) => {
+const create = async (newObject) => {
+  const user = await (JSON.parse(localStorage.getItem('user')))
   setToken(user.token)
   const config = {
     headers: { Authorization: token },
@@ -22,7 +23,15 @@ const create = async (newObject, user) => {
   return response.data
 }
 
-const update = async (newObject, user) => {
+const like = async (id) => {
+  const returnedObj = await axios.get(`${baseUrl}/${id}`)
+  const newObject = { ...returnedObj.data, votes: returnedObj.data.votes + 1 }
+  const response = await axios.put(`${baseUrl}/${id}`, newObject)
+  return response.data
+}
+
+const update = async (newObject) => {
+  const user = await (JSON.parse(localStorage.getItem('user')))
   setToken(user.token)
   const config = {
     headers: { Authorization: token },
@@ -32,7 +41,8 @@ const update = async (newObject, user) => {
   return response.data
 }
 
-const remove = async (blogId, user) => {
+const remove = async (blogId) => {
+  const user = await (JSON.parse(localStorage.getItem('user')))
   setToken(user.token)
   const config = {
     headers: { Authorization: token },
@@ -41,4 +51,4 @@ const remove = async (blogId, user) => {
   return response.data
 }
 
-export default { getAll, create, update, remove }
+export default { getAll, create, update, remove, like }
