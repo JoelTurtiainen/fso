@@ -5,19 +5,24 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
 import { initializeBlogs } from './reducers/blogReducer'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { initializeUser, logOff, setUser } from './reducers/userReducer'
 
 const App = () => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || null))
   const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
     dispatch(initializeBlogs())
-  })
+    const userData = JSON.parse(localStorage.getItem('user'))
+    if (userData) {
+      dispatch(initializeUser(userData))
+    }
+  }, [])
 
-  useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(user))
-  }, [user])
+  const logOut = () => {
+    dispatch(logOff())
+  }
 
   const ref = useRef()
 
@@ -27,7 +32,7 @@ const App = () => {
       <div>
         <Notification />
         <h2>Log in to application</h2>
-        <LoginForm setUser={setUser} />
+        <LoginForm />
       </div>
     )
   }
@@ -37,7 +42,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification />
-      <p>{user.name} logged in <button onClick={() => setUser(null)}>logout</button></p>
+      <p>{user.name} logged in <button onClick={logOut}>logout</button></p>
       <Togglable buttonLabel="create new blog" ref={ref}>
         <BlogForm user={user} ref={ref} />
       </Togglable>
