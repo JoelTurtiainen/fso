@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
 import { setNotification } from '../reducers/notificationReducer'
 import { createBlog } from '../reducers/blogReducer'
@@ -6,13 +6,14 @@ import { createBlog } from '../reducers/blogReducer'
 const BlogForm = ({ ref }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
   const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
 
   const newBlogHandler = async (event) => {
     event.preventDefault()
     let msg
 
     try {
-      dispatch(createBlog(newBlog))
+      dispatch(createBlog(newBlog, user))
       setNewBlog({ title: '', url: '', author: '' })
 
       msg = `a new Blog ${newBlog.title} by ${newBlog.author} added`

@@ -3,9 +3,10 @@ import { setNotification } from '../reducers/notificationReducer'
 import Blog from './Blog'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 
-const BlogList = ({ user }) => {
+const BlogList = () => {
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
   console.log(blogs)
 
   const updateHandler = async (blogObject) => {
@@ -23,7 +24,7 @@ const BlogList = ({ user }) => {
     let msg
 
     try {
-      dispatch(removeBlog(blogObject.id))
+      dispatch(removeBlog(blogObject.id, user))
       msg = `Removed blog ${blogObject.title} by ${blogObject.author}`
     } catch ({ status }) {
       if (status === 401 && user.username === blogObject.user.username) {

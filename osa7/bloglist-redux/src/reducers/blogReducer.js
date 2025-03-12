@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
-import { useSelector } from 'react-redux'
 
 const initialState = []
 
@@ -46,10 +45,10 @@ export const initializeBlogs = () => {
   }
 }
 
-export const createBlog = content => {
+export const createBlog = (content, user) => {
   return async dispatch => {
-    const response = await blogService.create(content)
-    dispatch(appendBlog(response))
+    const newBlog = await blogService.create(content, user)
+    dispatch(appendBlog(newBlog, user))
   }
 }
 
@@ -60,9 +59,9 @@ export const likeBlog = id => {
   }
 }
 
-export const removeBlog = id => {
+export const removeBlog = (id, user) => {
   return async dispatch => {
-    await blogService.remove(id)
+    await blogService.remove(id, user)
     dispatch(filterBlog(id))
   }
 }

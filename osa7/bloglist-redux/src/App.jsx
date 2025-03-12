@@ -6,7 +6,7 @@ import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
 import { initializeBlogs } from './reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeUser, logOff, setUser } from './reducers/userReducer'
+import { initializeUser, logOff } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -44,9 +44,9 @@ const App = () => {
       <Notification />
       <p>{user.name} logged in <button onClick={logOut}>logout</button></p>
       <Togglable buttonLabel="create new blog" ref={ref}>
-        <BlogForm user={user} ref={ref} />
+        <BlogForm ref={ref} />
       </Togglable>
-      <BlogList user={user} />
+      <BlogList />
     </div>
   )
 }

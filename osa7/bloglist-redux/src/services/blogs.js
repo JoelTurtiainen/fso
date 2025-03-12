@@ -12,8 +12,7 @@ const getAll = async () => {
   return response.data
 }
 
-const create = async (newObject) => {
-  const user = await (JSON.parse(localStorage.getItem('user')))
+const create = async (newObject, user) => {
   setToken(user.token)
   const config = {
     headers: { Authorization: token },
@@ -30,8 +29,7 @@ const like = async (id) => {
   return response.data
 }
 
-const update = async (newObject) => {
-  const user = await (JSON.parse(localStorage.getItem('user')))
+const update = async (newObject, user) => {
   setToken(user.token)
   const config = {
     headers: { Authorization: token },
@@ -41,8 +39,7 @@ const update = async (newObject) => {
   return response.data
 }
 
-const remove = async (blogId) => {
-  const user = await (JSON.parse(localStorage.getItem('user')))
+const remove = async (blogId, user) => {
   setToken(user.token)
   const config = {
     headers: { Authorization: token },

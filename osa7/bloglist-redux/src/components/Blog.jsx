@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
 import styles from '../style.module.css'
+import { useSelector } from 'react-redux'
 
 const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
   const [visible, setVisible] = useState(false)
+  const user = useSelector(state => state.user)
 
   const showWhenVisible = { display: visible ? '' : 'none' }
   const buttonText = visible ? 'hide' : 'show'
@@ -27,7 +29,7 @@ const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
         <li><a href={blog.url}>{blog.url}</a></li>
         <li>likes {blog.likes} <button onClick={addLike}>like</button></li>
         <li>{blog.user.name}</li>
-        {isOwner ? <li><button onClick={() => removeBlog(blog)} className={styles.btnRemove}>remove</button></li> : ''}
+        {isOwner ? <li><button onClick={() => removeBlog(blog, user)} className={styles.btnRemove}>remove</button></li> : ''}
       </ul>
     </div>
   )
