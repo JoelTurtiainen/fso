@@ -24,7 +24,7 @@ const create = async (newObject, user) => {
 
 const like = async (id) => {
   const returnedObj = await axios.get(`${baseUrl}/${id}`)
-  const newObject = { ...returnedObj.data, votes: returnedObj.data.votes + 1 }
+  const newObject = { ...returnedObj.data, likes: returnedObj.data.likes + 1 }
   const response = await axios.put(`${baseUrl}/${id}`, newObject)
   return response.data
 }
