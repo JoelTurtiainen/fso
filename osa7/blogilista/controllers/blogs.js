@@ -60,7 +60,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response.status(401).json({ error: 'blog does not belong to current user' })
   }
 
-  response.status(204).end()
+  response.json(blog)
 })
 
 blogsRouter.put('/:id', async (request, response) => {

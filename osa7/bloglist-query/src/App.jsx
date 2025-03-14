@@ -1,44 +1,70 @@
 import { useState, useEffect, useRef } from 'react'
-import blogService from './services/blogs'
+import { getBlogs, createBlog } from './services/blogs'
 import loginService from './services/login'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-
+import { useNotificationDispatch } from './notificationContext'
+import { useUserValue, useUserDispatch } from './services/userContext'
 const App = () => {
-  const [message, setMessage] = useState({ text: null })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || null))
 
   const queryClient = useQueryClient()
 
-  useEffect(() => {
-    localStorage.setItem('user', JSON.stringify(user))
-  }, [user])
+  const notificationDispatch = useNotificationDispatch()
+  const userDispatch = useUserDispatch()
+  const user = useUserValue()
+
+  const newBlogMutation = useMutation({
+    mutationFn: createBlog,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueryData(['blogs'], blogs.concat(newBlog))
+      notificationDispatch({ type: 'added', content: newBlog.title })
+    },
+    onError: (error) => {
+      switch (error.status) {
+        case 401:
+          return notificationDispatch({ type: 'error', content: 'Login Expired' })
+        case 400:
+          return notificationDispatch({ type: 'error', content: 'Invalid Blog Body' })
+        default:
+          return notificationDispatch({ type: 'error', content: 'Unknown Error' })
+      }
+    }
+  })
+
+  const addBlog = async (event) => {
+    event.preventDefault()
+
+    const newBlog = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value,
+    }
+    newBlogMutation.mutate({ newBlog, user })
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password })
-      setUser(user) // Save user to localstorage
+      const response = await loginService.login({ username, password })
+      console.log('user: ', response)
+      userDispatch({ type: 'loggedin', payload: response })
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessage({ text: 'wrong username or password', error: true })
+      notificationDispatch({ type: 'error', content: 'wrong username or password' })
     }
-
-    setTimeout(() => {
-      setMessage({ text: null })
-    }, 5000)
   }
 
   const result = useQuery({
     queryKey: ['blogs'],
-    queryFn: blogService.getBlogs,
+    queryFn: getBlogs,
     refetchOnWindowFocus: false,
     retry: 1,
   })
@@ -48,10 +74,11 @@ const App = () => {
   const blogFormRef = useRef()
 
   const blogs = result.data
+
   if (user === null) {
     return (
       <div>
-        < Notification message={message} />
+        < Notification />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -80,28 +107,29 @@ const App = () => {
     )
   }
 
-  if (result.isLoading) {
-    return <div>loading data...</div>
-  }
-
   return (
     <div>
       <h2>blogs</h2>
-      < Notification message={message} />
-      <p>{user.name} logged in <button onClick={() => setUser(null)}>logout</button></p>
+      < Notification />
+      <p>{user.name} logged in <button onClick={() => userDispatch({ type: 'loggedout' })}>logout</button></p>
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <BlogForm />
+        <BlogForm addBlog={addBlog} />
       </Togglable>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) =>
-          <Blog
-            isOwner={user.username === blog.user.username}
-            key={blog.id}
-            blog={blog}
-          />
-        )
-      }
+      {result.isLoading ? (
+        'loading data...'
+      ) : (
+        <div>
+          {blogs.sort((a, b) => b.likes - a.likes)
+            .map((blog) =>
+              <Blog
+                isOwner={user.username === blog.user.username}
+                key={blog.id}
+                blog={blog}
+              />
+            )
+          }
+        </div>
+      )}
     </div>
   )
 }

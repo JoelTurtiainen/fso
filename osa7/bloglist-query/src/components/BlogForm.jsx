@@ -1,25 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { PropTypes } from 'prop-types'
 import { useState } from 'react'
-import blogService from '../services/blogs'
+import { useNotificationDispatch } from '../notificationContext'
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ addBlog }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
-  const queryClient = useQueryClient()
-
-  const newBlogMutation = useMutation({
-    mutationFn: blogService.createBlog,
-    onSuccess: (newBlog) => {
-      const blogs = queryClient.getQueryData({ queryKey: ['blogs'] })
-      queryClient.setQueryData({ queryKey: ['blogs'] }, blogs.concat(newBlog))
-    }
-  })
-
-  const addBlog = (event) => {
-    event.preventDefault()
-    newBlogMutation.mutate(newBlog)
-    setNewBlog({ title: '', url: '', author: '' })
-  }
 
   return (
     <form onSubmit={addBlog}>
@@ -28,7 +13,7 @@ const BlogForm = ({ createBlog }) => {
         title:
         <input type="text"
           value={newBlog.title}
-          aria-label="blogTitle"
+          name='title'
           onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
         />
       </div>
@@ -36,7 +21,7 @@ const BlogForm = ({ createBlog }) => {
         author:
         <input type="text"
           value={newBlog.author}
-          aria-label="blogAuthor"
+          name='author'
           onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
         />
       </div>
@@ -44,7 +29,7 @@ const BlogForm = ({ createBlog }) => {
         url:
         <input type="text"
           value={newBlog.url}
-          aria-label="blogUrl"
+          name='url'
           onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
         />
       </div>
