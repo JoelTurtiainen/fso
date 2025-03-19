@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import { loginUser } from '../reducers/userReducer'
+import { loginUser } from '../reducers/credentialReducer'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const navigate = useNavigate()
+  const user = useSelector((state) => state.user)
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -17,6 +19,7 @@ const LoginForm = () => {
       localStorage.setItem('user', user)
       setUsername('')
       setPassword('')
+      navigate('/')
     } catch (exception) {
       dispatch(setNotification('wrong username or password'))
     }
@@ -27,7 +30,7 @@ const LoginForm = () => {
       <div>
         username
         <input
-          data-testid='username'
+          data-testid="username"
           type="text"
           value={username}
           aria-label="Username"
@@ -37,7 +40,7 @@ const LoginForm = () => {
       <div>
         password
         <input
-          data-testid='password'
+          data-testid="password"
           type="password"
           value={password}
           aria-label="Password"

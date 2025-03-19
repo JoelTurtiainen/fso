@@ -13,8 +13,8 @@ describe('<Blog />', () => {
       url: 'google.com',
       likes: 0,
       user: {
-        name: 'kevin'
-      }
+        name: 'kevin',
+      },
     }
 
     mockHandler = vi.fn()
@@ -22,7 +22,9 @@ describe('<Blog />', () => {
   })
 
   test('renders: title', () => {
-    const element = screen.getByText('Component testing is done with react-testing-library')
+    const element = screen.getByText(
+      'Component testing is done with react-testing-library'
+    )
     expect(element).toBeDefined()
   })
 
@@ -34,7 +36,7 @@ describe('<Blog />', () => {
     const toggleable = container.querySelectorAll('ul')[1]
 
     const matchers = [blog.url, `likes ${blog.likes}`, blog.user.name]
-    const elements = matchers.filter(matcher => screen.getByText(matcher))
+    const elements = matchers.filter((matcher) => screen.getByText(matcher))
 
     expect(toggleable).not.toHaveStyle('display: none')
     expect(elements).toHaveLength(3)
