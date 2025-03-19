@@ -2,9 +2,16 @@ import PropTypes from 'prop-types'
 import styles from '../style.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import {
+  addComment,
+  commentBlog,
+  likeBlog,
+  removeBlog,
+} from '../reducers/blogReducer'
+import { useState } from 'react'
 
-const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
+const Blog = ({ blog, isOwner }) => {
+  const [newComment, setNewComment] = useState('')
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
 
@@ -38,6 +45,15 @@ const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
     dispatch(setNotification(msg))
   }
 
+  const submitComment = (e) => {
+    e.preventDefault()
+    try {
+      dispatch(commentBlog({ id: blog.id, newComment }))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className={styles.blog}>
       <ul className={styles.title}>
@@ -69,6 +85,15 @@ const Blog = ({ blog, updateBlog, removeBlog, isOwner }) => {
         )}
       </ul>
       <h3>comments</h3>
+      <form onSubmit={submitComment}>
+        <input
+          type="text"
+          name="comment"
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        />
+        <button type="submit">add comment</button>
+      </form>
       {blog.comments ? (
         <ul>
           {blog.comments.map((comment, index) => (

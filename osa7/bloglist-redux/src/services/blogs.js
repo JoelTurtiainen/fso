@@ -29,6 +29,16 @@ const like = async (id) => {
   return response.data
 }
 
+const comment = async ({ id, newComment }) => {
+  const returnedObj = await axios.get(`${baseUrl}/${id}`)
+  const newObject = {
+    ...returnedObj.data,
+    comments: [...returnedObj.data.comments, newComment],
+  }
+  const response = await axios.put(`${baseUrl}/${id}`, newObject)
+  return response.data
+}
+
 const update = async (newObject, user) => {
   setToken(user.token)
   const config = {
@@ -52,4 +62,4 @@ const remove = async (blogId, user) => {
   return response.data
 }
 
-export default { getAll, create, update, remove, like }
+export default { getAll, create, update, remove, like, comment }
