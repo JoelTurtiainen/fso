@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
 import { setNotification } from '../reducers/notificationReducer'
 import { createBlog } from '../reducers/blogReducer'
+import { Form, Button } from 'react-bootstrap'
 
 const BlogForm = ({ ref }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
@@ -30,44 +31,48 @@ const BlogForm = ({ ref }) => {
     dispatch(setNotification(msg))
   }
 
+  if (!user) return
+
   return (
-    <form onSubmit={newBlogHandler}>
+    <div>
       <h2>Create New</h2>
-      <div>
-        title:
-        <input
-          type="text"
-          value={newBlog.title}
-          aria-label="blogTitle"
-          onChange={({ target }) =>
-            setNewBlog({ ...newBlog, title: target.value })
-          }
-        />
-      </div>
-      <div>
-        author:
-        <input
-          type="text"
-          value={newBlog.author}
-          aria-label="blogAuthor"
-          onChange={({ target }) =>
-            setNewBlog({ ...newBlog, author: target.value })
-          }
-        />
-      </div>
-      <div>
-        url:
-        <input
-          type="text"
-          value={newBlog.url}
-          aria-label="blogUrl"
-          onChange={({ target }) =>
-            setNewBlog({ ...newBlog, url: target.value })
-          }
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>
+      <Form onSubmit={newBlogHandler}>
+        <Form.Group>
+          <Form.Label>title: </Form.Label>
+          <Form.Control
+            type="text"
+            value={newBlog.title}
+            aria-label="blogTitle"
+            onChange={({ target }) =>
+              setNewBlog({ ...newBlog, title: target.value })
+            }
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>author:</Form.Label>
+          <Form.Control
+            type="text"
+            value={newBlog.author}
+            aria-label="blogAuthor"
+            onChange={({ target }) =>
+              setNewBlog({ ...newBlog, author: target.value })
+            }
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label> url: </Form.Label>
+          <Form.Control
+            type="text"
+            value={newBlog.url}
+            aria-label="blogUrl"
+            onChange={({ target }) =>
+              setNewBlog({ ...newBlog, url: target.value })
+            }
+          />
+        </Form.Group>
+        <Button type="submit">create</Button>
+      </Form>
+    </div>
   )
 }
 

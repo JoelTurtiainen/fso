@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { loginUser } from '../reducers/credentialReducer'
 import { useNavigate } from 'react-router-dom'
+import { Form, Button } from 'react-bootstrap'
 
 const LoginForm = () => {
   const [username, setUsername] = useState('')
@@ -20,35 +21,40 @@ const LoginForm = () => {
       setUsername('')
       setPassword('')
       navigate('/')
+      dispatch(setNotification(`welcome ${username}`))
     } catch (exception) {
       dispatch(setNotification('wrong username or password'))
     }
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
+    <Form onSubmit={handleLogin}>
+      <Form.Group>
+        <Form.Label>username:</Form.Label>
+        <Form.Control
           data-testid="username"
           type="text"
+          autoComplete="username"
           value={username}
           aria-label="Username"
           onChange={({ target }) => setUsername(target.value)}
         />
-      </div>
-      <div>
-        password
-        <input
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>password:</Form.Label>
+        <Form.Control
           data-testid="password"
           type="password"
+          autoComplete="current-password"
           value={password}
           aria-label="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
-      </div>
-      <button type="submit">login</button>
-    </form>
+      </Form.Group>
+      <Button vartiant="primary" type="submit">
+        login
+      </Button>
+    </Form>
   )
 }
 

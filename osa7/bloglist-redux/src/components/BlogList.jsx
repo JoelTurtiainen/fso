@@ -1,6 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux'
-import styles from '../style.module.css'
 import { Link } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 const BlogList = ({ blogs }) => {
   if (blogs.length < 1) {
@@ -8,17 +7,20 @@ const BlogList = ({ blogs }) => {
   }
 
   return (
-    <ul className={styles.nostyle}>
-      {[...blogs]
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <li key={blog.id} className={styles.blog}>
-            <Link to={`/blogs/${blog.id}`}>
-              {blog.title} {blog.author}
-            </Link>
-          </li>
-        ))}
-    </ul>
+    <Table striped>
+      <tbody>
+        {[...blogs]
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <tr key={blog.id}>
+              <td>
+                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+              </td>
+              <td>{blog.author}</td>
+            </tr>
+          ))}
+      </tbody>
+    </Table>
   )
 }
 

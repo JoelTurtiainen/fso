@@ -2,13 +2,9 @@ import PropTypes from 'prop-types'
 import styles from '../style.module.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
-import {
-  addComment,
-  commentBlog,
-  likeBlog,
-  removeBlog,
-} from '../reducers/blogReducer'
+import { commentBlog, likeBlog, removeBlog } from '../reducers/blogReducer'
 import { useState } from 'react'
+import { Button, Col, Form, Row } from 'react-bootstrap'
 
 const Blog = ({ blog, isOwner }) => {
   const [newComment, setNewComment] = useState('')
@@ -55,55 +51,64 @@ const Blog = ({ blog, isOwner }) => {
   }
 
   return (
-    <div className={styles.blog}>
-      <ul className={styles.title}>
-        <li>
-          <h2>{blog.title}</h2>
-        </li>
-        <li>{blog.author}</li>
-      </ul>
-      <ul>
+    <article>
+      <div>
+        <h2 className="display-5 mb-1">
+          {blog.title}
+          <span className="lead"> {blog.author}</span>
+        </h2>
+      </div>
+      <ul className={styles.nostyle}>
         <li>
           <a href={blog.url}>{blog.url}</a>
         </li>
         <li>
           {`likes ${blog.likes} `}
-          <button onClick={() => updateHandler(blog)}>like</button>
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={() => updateHandler(blog)}
+          >
+            like
+          </Button>
         </li>
-        <li>{blog.user.name}</li>
-        {isOwner ? (
-          <li>
-            <button
+        <li>
+          {blog.user.name}
+          {isOwner && (
+            <Button
+              size="sm"
+              variant="danger"
               onClick={() => removeHandler(blog, user)}
-              className={styles.btnRemove}
             >
               remove
-            </button>
-          </li>
-        ) : (
-          ''
-        )}
+            </Button>
+          )}
+        </li>
       </ul>
       <h3>comments</h3>
-      <form onSubmit={submitComment}>
-        <input
-          type="text"
-          name="comment"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <button type="submit">add comment</button>
-      </form>
-      {blog.comments ? (
+      <Form onSubmit={submitComment}>
+        <Row className="align-items-center">
+          <Col>
+            <Form.Control
+              type="text"
+              name="comment"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+          </Col>
+          <Col>
+            <Button type="submit">add comment</Button>
+          </Col>
+        </Row>
+      </Form>
+      {blog.comments && (
         <ul>
           {blog.comments.map((comment, index) => (
             <li key={index}>{comment}</li>
           ))}
         </ul>
-      ) : (
-        'no comments'
       )}
-    </div>
+    </article>
   )
 }
 

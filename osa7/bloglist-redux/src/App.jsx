@@ -9,18 +9,11 @@ import { initializeBlogs } from './reducers/blogReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeUser, logOff } from './reducers/credentialReducer'
 import { initializeUsers } from './reducers/usersReducer'
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-  useMatch,
-} from 'react-router-dom'
+import { Routes, Route, Link, useNavigate, useMatch } from 'react-router-dom'
+import { Button, Nav, Navbar, Table } from 'react-bootstrap'
 
-const Menu = () => {
+const Menu = ({ user }) => {
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.user)
   const navigate = useNavigate()
 
   const padding = {
@@ -33,32 +26,45 @@ const Menu = () => {
   }
 
   return (
-    <div>
-      <Link style={padding} to="/">
-        blogs
-      </Link>
-      <Link style={padding} to="/users">
-        users
-      </Link>
-      {user ? (
-        <>
-          {user.name} logged in <button onClick={logOut}>logout</button>
-        </>
-      ) : (
-        <Link to="/login">login</Link>
-      )}
-    </div>
+    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="mr-auto px-4">
+          <Nav.Link href="#" as="span">
+            <Link style={padding} to="/">
+              blogs
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link style={padding} to="/users">
+              users
+            </Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            {user ? (
+              <em>
+                {user.name} logged in <Button onClick={logOut}>logout</Button>
+              </em>
+            ) : (
+              <Link to="/login">login</Link>
+            )}
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   )
 }
 
-const Blogs = ({ blogs }) => {
+const Blogs = ({ blogs, user }) => {
   const ref = useRef()
   return (
     <>
       <h2>blogs</h2>
-      <Togglable buttonLabel="create new blog" ref={ref}>
-        <BlogForm ref={ref} />
-      </Togglable>
+      {user && (
+        <Togglable buttonLabel="create new blog" ref={ref}>
+          <BlogForm ref={ref} />
+        </Togglable>
+      )}
       <BlogList blogs={blogs} />
     </>
   )
@@ -80,32 +86,25 @@ const BlogDetailed = () => {
 }
 
 const Users = (props) => {
-  const padding = {
-    paddingRight: 5,
-  }
-
   return (
-    <>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th />
-            <th>blogs created</th>
+    <Table striped>
+      <thead>
+        <tr>
+          <th>users</th>
+          <th>blogs created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.users.map((user) => (
+          <tr key={user.id}>
+            <td>
+              <Link to={`/users/${user.id}`}>{user.name}</Link>
+            </td>
+            <td>{user.blogs.length}</td>
           </tr>
-        </thead>
-        <tbody>
-          {props.users.map((user) => (
-            <tr key={user.id}>
-              <td style={padding}>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td style={padding}>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+        ))}
+      </tbody>
+    </Table>
   )
 }
 
@@ -134,6 +133,7 @@ const Login = () => {
 
 const App = () => {
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user)
   const blogs = useSelector((state) => state.blogs)
   const users = useSelector((state) => state.users)
 
@@ -145,13 +145,13 @@ const App = () => {
   }, [])
 
   return (
-    <div>
-      <Menu />
+    <div className="container">
+      <Menu user={user} />
       <Notification />
 
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Blogs blogs={blogs} />} />
+        <Route path="/" element={<Blogs blogs={blogs} user={user} />} />
         <Route path="/blogs/:id" element={<BlogDetailed />} />
         <Route path="/users" element={<Users users={users} />} />
         <Route path="/users/:id" element={<UserDetailed users={users} />} />
