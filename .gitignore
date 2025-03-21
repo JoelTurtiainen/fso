@@ -26,3 +26,4 @@ testing
 *.sln
 *.sw?
 osa6/query-anecdotes/db.json
+osa8/apollo-server/index.old.js
