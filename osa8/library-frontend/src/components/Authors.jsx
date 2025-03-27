@@ -3,9 +3,14 @@ import { ALL_AUTHORS, ALL_BOOKS, EDIT_AUTHOR } from '../queries';
 import { useEffect, useState } from 'react';
 
 const Authors = (props) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState(null);
   const [born, setBorn] = useState('');
+  const [authors, setAuthors] = useState(null);
   const result = useQuery(ALL_AUTHORS);
+
+  if (!props.show) {
+    return null;
+  }
 
   const [editAuthor, editResult] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
@@ -21,23 +26,25 @@ const Authors = (props) => {
     }
   }, [editResult.data]);
 
-  if (!props.show) {
-    return null;
-  }
+  useEffect(() => {
+    if (result.loading) return;
+    setAuthors(result.data.allAuthors);
+    setName(result.data.allAuthors[0].name);
+  }, [result.data]);
 
-  if (result.loading) {
+  if (result.loading || !authors) {
     return 'loading...';
   }
 
-  const authors = result.data.allAuthors;
-  console.log(authors);
-
   const submit = async (event) => {
     event.preventDefault();
-
+    if (born < 1) {
+      props.setError('invalid year');
+      return;
+    }
     editAuthor({ variables: { name, setBornTo: Number(born) } });
-    console.log(event);
   };
+
   return (
     <div>
       <h2>authors</h2>

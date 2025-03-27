@@ -160,13 +160,16 @@ const resolvers = {
       return book.save();
     },
     editAuthor: async (root, args) => {
-      const author = authors.find((p) => p.name === args.name);
+      const author = Author.findOne({ name: args.name });
       if (!author) {
         return null;
       }
+      const updatedAuthor = await Author.findOneAndUpdate(
+        { name: args.name },
+        { born: Number(args.setBornTo) },
+        { new: true, runValidators: true, context: "query" },
+      );
 
-      const updatedAuthor = { ...author, born: args.setBornTo };
-      authors = authors.map((p) => (p.name === args.name ? updatedAuthor : p));
       return updatedAuthor;
     },
   },
