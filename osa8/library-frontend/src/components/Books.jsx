@@ -10,6 +10,7 @@ const Books = (props) => {
 
   const books = result.data.allBooks;
 
+  console.log(books);
   if (!props.show) {
     return null;
   }
