@@ -4,15 +4,15 @@ import { ALL_BOOKS } from '../queries';
 const Books = (props) => {
   const result = useQuery(ALL_BOOKS);
 
-  if (!props.show) {
-    return null;
-  }
   if (result.loading) {
     return 'loading...';
   }
 
   const books = result.data.allBooks;
-  console.log(books);
+
+  if (!props.show) {
+    return null;
+  }
 
   return (
     <div>

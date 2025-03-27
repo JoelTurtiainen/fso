@@ -8,10 +8,6 @@ const Authors = (props) => {
   const [authors, setAuthors] = useState(null);
   const result = useQuery(ALL_AUTHORS);
 
-  if (!props.show) {
-    return null;
-  }
-
   const [editAuthor, editResult] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
@@ -44,6 +40,10 @@ const Authors = (props) => {
     }
     editAuthor({ variables: { name, setBornTo: Number(born) } });
   };
+
+  if (!props.show) {
+    return null;
+  }
 
   return (
     <div>
