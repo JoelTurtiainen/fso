@@ -1,24 +1,24 @@
-const { ApolloServer } = require("@apollo/server");
-const { startStandaloneServer } = require("@apollo/server/standalone");
-const mongoose = require("mongoose");
-mongoose.set("strictQuery", false);
-const Author = require("./models/author");
-const Book = require("./models/book");
-const { GraphQLError } = require("graphql");
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
+const mongoose = require('mongoose');
+mongoose.set('strictQuery', false);
+const Author = require('./models/author');
+const Book = require('./models/book');
+const { GraphQLError } = require('graphql');
 
-require("dotenv").config();
+require('dotenv').config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-console.log("connecting to", MONGODB_URI);
+console.log('connecting to', MONGODB_URI);
 
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    console.log("connected to MongoDB");
+    console.log('connected to MongoDB');
   })
   .catch((error) => {
-    console.log("error connection to MongoDB:", error.message);
+    console.log('error connection to MongoDB:', error.message);
   });
 
 const typeDefs = `
@@ -70,7 +70,7 @@ const resolvers = {
       if (args.genre) {
         query.genres = args.genre;
       }
-      return Book.find(query).populate("author", {
+      return Book.find(query).populate('author', {
         name: 1,
         born: 1,
       });
@@ -93,9 +93,9 @@ const resolvers = {
         try {
           await author.save();
         } catch (error) {
-          throw new GraphQLError("Author should be atleast 4 characters long", {
+          throw new GraphQLError('Author should be atleast 4 characters long', {
             extensions: {
-              code: "BAD_USER_INPUT",
+              code: 'BAD_USER_INPUT',
               invalidArgs: args.author,
               error,
             },
@@ -108,9 +108,9 @@ const resolvers = {
       try {
         await book.save();
       } catch (error) {
-        throw new GraphQLError("Title should be atleast 5 characters long", {
+        throw new GraphQLError('Title should be atleast 5 characters long', {
           extensions: {
-            code: "BAD_USER_INPUT",
+            code: 'BAD_USER_INPUT',
             invalidArgs: args.title,
             error,
           },
@@ -121,9 +121,9 @@ const resolvers = {
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name });
       if (!author) {
-        throw new GraphQLError("Author not found", {
+        throw new GraphQLError('Author not found', {
           extensions: {
-            code: "BAD_USER_INPUT",
+            code: 'BAD_USER_INPUT',
             invalidArgs: args.name,
           },
         });
@@ -131,7 +131,7 @@ const resolvers = {
       return Author.findOneAndUpdate(
         { name: args.name },
         { born: Number(args.setBornTo) },
-        { new: true, runValidators: true, context: "query" },
+        { new: true, runValidators: true, context: 'query' }
       );
     },
   },

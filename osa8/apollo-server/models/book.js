@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // you must install this library
-const uniqueValidator = require("mongoose-unique-validator");
+const uniqueValidator = require('mongoose-unique-validator');
 
 const schema = new mongoose.Schema({
   title: {
@@ -15,13 +15,13 @@ const schema = new mongoose.Schema({
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Author",
+    ref: 'Author',
   },
   genres: [{ type: String }],
 });
 
 schema.plugin(uniqueValidator);
-schema.set("toJSON", {
+schema.set('toJSON', {
   transform: (document, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
     delete returnedObj._id;
@@ -29,4 +29,4 @@ schema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Book", schema);
+module.exports = mongoose.model('Book', schema);
