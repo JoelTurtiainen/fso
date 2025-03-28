@@ -18,7 +18,7 @@ const Authors = (props) => {
 
   useEffect(() => {
     if (editResult.data && editResult.data.editAuthor === null) {
-      props.setError('person not found');
+      props.setError('author not found');
     }
   }, [editResult.data]);
 

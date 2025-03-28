@@ -9,14 +9,25 @@ const NewBook = (props) => {
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState([]);
 
-  const [createBook] = useMutation(CREATE_BOOK, {
+  const [createBook, createBookResult] = useMutation(CREATE_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    onError: (error) => {
+      const messages = error.graphQLErrors.map((e) => e.message).join('\n');
+      console.log(messages);
+    },
   });
 
   const submit = async (event) => {
     event.preventDefault();
 
     console.log('add book...');
+    if (title.length < 5) {
+      props.setError('title must be atleast 5 characters long');
+      return;
+    }
+    if (author.length < 4) {
+      props.setError('title must be atleast 5 characters long');
+    }
     createBook({ variables: { title, author, published: Number(published), genres } });
 
     setTitle('');
