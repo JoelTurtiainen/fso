@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const Author = require("./models/author");
 const Book = require("./models/book");
+const { GraphQLError } = require("graphql");
 
 require("dotenv").config();
 
@@ -89,24 +90,49 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author });
       if (!author) {
         author = new Author({ name: args.author });
-        author = await author.save();
+        try {
+          await author.save();
+        } catch (error) {
+          throw new GraphQLError("Author should be atleast 4 characters long", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.author,
+              error,
+            },
+          });
+        }
       }
 
       const book = new Book({ ...args, author });
-      return book.save();
+
+      try {
+        await book.save();
+      } catch (error) {
+        throw new GraphQLError("Title should be atleast 5 characters long", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.title,
+            error,
+          },
+        });
+      }
+      return book;
     },
     editAuthor: async (root, args) => {
-      const author = Author.findOne({ name: args.name });
+      const author = await Author.findOne({ name: args.name });
       if (!author) {
-        return null;
+        throw new GraphQLError("Author not found", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.name,
+          },
+        });
       }
-      const updatedAuthor = await Author.findOneAndUpdate(
+      return Author.findOneAndUpdate(
         { name: args.name },
         { born: Number(args.setBornTo) },
         { new: true, runValidators: true, context: "query" },
       );
-
-      return updatedAuthor;
     },
   },
 };

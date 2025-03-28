@@ -12,15 +12,9 @@ const Authors = (props) => {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
-      console.log(messages);
+      props.setError(messages);
     },
   });
-
-  useEffect(() => {
-    if (editResult.data && editResult.data.editAuthor === null) {
-      props.setError('author not found');
-    }
-  }, [editResult.data]);
 
   useEffect(() => {
     if (result.loading) return;
@@ -34,10 +28,6 @@ const Authors = (props) => {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (born < 1) {
-      props.setError('invalid year');
-      return;
-    }
     editAuthor({ variables: { name, setBornTo: Number(born) } });
   };
 

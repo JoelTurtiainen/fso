@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries';
 
 const NewBook = (props) => {
@@ -13,21 +13,19 @@ const NewBook = (props) => {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
-      console.log(messages);
+      props.setError(messages);
     },
   });
+
+  useEffect(() => {
+    console.log('bruh;', createBookResult.data);
+  }, [createBookResult.data]);
 
   const submit = async (event) => {
     event.preventDefault();
 
     console.log('add book...');
-    if (title.length < 5) {
-      props.setError('title must be atleast 5 characters long');
-      return;
-    }
-    if (author.length < 4) {
-      props.setError('title must be atleast 5 characters long');
-    }
+
     createBook({ variables: { title, author, published: Number(published), genres } });
 
     setTitle('');
