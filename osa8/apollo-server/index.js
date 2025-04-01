@@ -145,13 +145,16 @@ const resolvers = {
       const book = new Book({ ...args, author });
 
       return book.save().catch((error) => {
-        throw new GraphQLError('Title should be atleast 5 characters long', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            invalidArgs: args.title,
-            error,
-          },
-        });
+        throw new GraphQLError(
+          book.title.length < 5 ? 'Title should be atleast 5 characters long' : 'Title needs to be unique',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.title,
+              error,
+            },
+          }
+        );
       });
     },
     editAuthor: async (root, args, context) => {
