@@ -17,15 +17,16 @@ const NewBook = (props) => {
     update: (cache, response) => {
       console.log('response', response);
       cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        console.log(response.data.addBook);
         return {
           allBooks: allBooks.concat(response.data.addBook),
         };
       });
       cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-        console.log(response.data.addBook);
+        const foundAuthor = allAuthors.find((author) => author.id === response.data.addBook.author.id);
         return {
-          allAuthors: allAuthors.concat(response.data.addBook.author),
+          allAuthors: foundAuthor
+            ? allAuthors.filter((author) => author.id !== foundAuthor.id).concat({ ...foundAuthor })
+            : allAuthors.concat(response.data.addBook.author),
         };
       });
     },
