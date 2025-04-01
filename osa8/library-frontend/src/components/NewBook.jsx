@@ -17,10 +17,6 @@ const NewBook = (props) => {
     },
   });
 
-  useEffect(() => {
-    console.log('bruh;', createBookResult.data);
-  }, [createBookResult.data]);
-
   const submit = async (event) => {
     event.preventDefault();
 
@@ -47,6 +43,7 @@ const NewBook = (props) => {
   return (
     <div>
       <form onSubmit={submit}>
+        <h2>Add Book</h2>
         <div>
           title
           <input value={title} onChange={({ target }) => setTitle(target.value)} />
@@ -60,10 +57,10 @@ const NewBook = (props) => {
           <input type="number" value={published} onChange={({ target }) => setPublished(target.value)} />
         </div>
         <div>
-          <input value={genre} onChange={({ target }) => setGenre(target.value)} />
           <button onClick={addGenre} type="button">
             add genre
           </button>
+          <input value={genre} onChange={({ target }) => setGenre(target.value)} />
         </div>
         <div>genres: {genres.join(' ')}</div>
         <button type="submit">create book</button>
