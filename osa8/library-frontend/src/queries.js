@@ -17,10 +17,12 @@ export const ALL_BOOKS = gql`
       title
       author {
         name
+        __typename
       }
       genres
       published
       id
+      __typename
     }
   }
 `;
@@ -31,9 +33,15 @@ export const CREATE_BOOK = gql`
       title
       author {
         name
+        bookCount
+        id
+        born
+        __typename
       }
       published
       genres
+      id
+      __typename
     }
   }
 `;

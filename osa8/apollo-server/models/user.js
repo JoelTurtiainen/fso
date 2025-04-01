@@ -16,12 +16,4 @@ const schema = new mongoose.Schema({
 
 schema.plugin(uniqueValidator);
 
-schema.set('toJSON', {
-  transform: (document, returnedObj) => {
-    returnedObj.id = returnedObj._id.toString();
-    delete returnedObj._id;
-    delete returnedObj._v;
-  },
-});
-
 module.exports = mongoose.model('User', schema);

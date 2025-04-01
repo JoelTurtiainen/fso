@@ -4,11 +4,13 @@ import Books from './components/Books';
 import NewBook from './components/NewBook';
 import Notify from './components/Notify';
 import Login from './components/Login';
+import { useApolloClient } from '@apollo/client';
 
 const App = () => {
   const [page, setPage] = useState('authors');
   const [errorMessage, setErrorMessage] = useState(null);
   const [loggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem('token')));
+  const client = useApolloClient();
 
   useEffect(() => {
     setPage('authors');
@@ -22,7 +24,8 @@ const App = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.clear();
+    client.resetStore();
     setLoggedIn(false);
   };
 

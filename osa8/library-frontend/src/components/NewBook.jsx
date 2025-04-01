@@ -9,11 +9,25 @@ const NewBook = (props) => {
   const [genre, setGenre] = useState('');
   const [genres, setGenres] = useState([]);
 
-  const [createBook, createBookResult] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+  const [createBook] = useMutation(CREATE_BOOK, {
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
       props.setError(messages);
+    },
+    update: (cache, response) => {
+      console.log('response', response);
+      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        console.log(response.data.addBook);
+        return {
+          allBooks: allBooks.concat(response.data.addBook),
+        };
+      });
+      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
+        console.log(response.data.addBook);
+        return {
+          allAuthors: allAuthors.concat(response.data.addBook.author),
+        };
+      });
     },
   });
 
