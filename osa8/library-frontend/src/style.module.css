@@ -1,0 +1,21 @@
+.button-black {
+  background-color: #555555; /* Black */
+  color: white;
+  border: none;
+  padding: 0.5em 1.5em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1em;
+}
+
+.button-gray {
+  background-color: #e7e7e7; /* Gray */
+  color: black;
+  border: none;
+  padding: 0.5em 1.5em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1em;
+}
