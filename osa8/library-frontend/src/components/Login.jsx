@@ -26,10 +26,11 @@ const Login = (props) => {
       const user = await loginUser({ variables: { username, password } });
       localStorage.setItem('token', user.data.login.value);
       props.setLoggedIn(true);
-      props.setPage('authors');
     } else if (action === 'register') {
       const user = await createUser({ variables: { username, favoriteGenre } });
-      setAction('login');
+      if (user.data) {
+        setAction('login');
+      }
     }
   };
 
