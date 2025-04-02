@@ -1,13 +1,16 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useState } from 'react';
-import { CREATE_USER, LOG_IN } from '../queries';
+import { useEffect, useState } from 'react';
+import { CREATE_USER, LOG_IN, ME } from '../queries';
 
 const Login = (props) => {
   const [action, setAction] = useState('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [favoriteGenre, setFavoriteGenre] = useState('');
-  const [loginUser] = useMutation(LOG_IN, {
+
+  const resultUser = useQuery(ME);
+
+  const [loginUser, loginResult] = useMutation(LOG_IN, {
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
       props.setError(messages);
@@ -19,6 +22,11 @@ const Login = (props) => {
       props.setError(messages);
     },
   });
+
+  useEffect(() => {
+    // fetch me to cache on login
+    resultUser.refetch();
+  }, [loginResult]);
 
   const submit = async (e) => {
     e.preventDefault();

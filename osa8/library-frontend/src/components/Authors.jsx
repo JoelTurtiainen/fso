@@ -22,6 +22,10 @@ const Authors = (props) => {
     setName(result.data.allAuthors[0].name);
   }, [result.data]);
 
+  if (!props.show) {
+    return null;
+  }
+
   if (result.loading || !authors) {
     return 'loading...';
   }
@@ -30,10 +34,6 @@ const Authors = (props) => {
     event.preventDefault();
     editAuthor({ variables: { name, setBornTo: Number(born) } });
   };
-
-  if (!props.show) {
-    return null;
-  }
 
   return (
     <div>

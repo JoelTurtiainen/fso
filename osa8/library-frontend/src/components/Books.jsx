@@ -10,8 +10,12 @@ const Books = (props) => {
 
   useEffect(() => {
     if (result.loading) return;
-    setGenres(['all', ...new Set(books.flatMap((book) => book.genres))]);
+    setGenres(['all', ...new Set(result.data.allBooks.flatMap((book) => book.genres))]);
   }, [result]);
+
+  if (!props.show) {
+    return null;
+  }
 
   if (result.loading) {
     return 'loading...';
@@ -19,10 +23,6 @@ const Books = (props) => {
 
   const books = result.data.allBooks;
   const booksToShow = genreFilter === 'all' ? books : books.filter((book) => book.genres.includes(genreFilter));
-
-  if (!props.show) {
-    return null;
-  }
 
   return (
     <div>
