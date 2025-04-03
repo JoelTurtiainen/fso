@@ -1,25 +1,24 @@
 import { useQuery } from '@apollo/client';
 import { ALL_BOOKS, ME } from '../queries';
+import { useMemo } from 'react';
 
 const Recommend = (props) => {
-  const resultBook = useQuery(ALL_BOOKS);
   const resultUser = useQuery(ME);
+  const favoriteGenre = useMemo(() => resultUser.data?.me?.favoriteGenre, [resultUser]);
+  const resultBook = useQuery(ALL_BOOKS, {
+    skip: !favoriteGenre,
+    variables: { genre: favoriteGenre },
+  });
 
-  if (!props.show || !resultUser.data) {
+  if (!props.show) {
     return null;
   }
 
-  if (!resultUser.data.me) {
-    resultUser.refetch();
-  }
-
-  if (resultBook.loading || resultUser.loading) {
+  if (resultUser.loading || !resultBook.data) {
     return 'loading...';
   }
 
   const books = resultBook.data.allBooks;
-  const favoriteGenre = resultUser.data.me ? resultUser.data.me.favoriteGenre : '';
-  const booksToShow = books.filter((book) => book.genres.includes(favoriteGenre));
 
   return (
     <div>
@@ -37,13 +36,14 @@ const Recommend = (props) => {
             <th>published</th>
           </tr>
 
-          {booksToShow.map((a) => (
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
-            </tr>
-          ))}
+          {books &&
+            books.map((a) => (
+              <tr key={a.title}>
+                <td>{a.title}</td>
+                <td>{a.author.name}</td>
+                <td>{a.published}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

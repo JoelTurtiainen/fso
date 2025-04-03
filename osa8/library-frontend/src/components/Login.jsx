@@ -23,11 +23,6 @@ const Login = (props) => {
     },
   });
 
-  useEffect(() => {
-    // fetch me to cache on login
-    resultUser.refetch();
-  }, [loginResult]);
-
   const submit = async (e) => {
     e.preventDefault();
     if (action === 'login') {
