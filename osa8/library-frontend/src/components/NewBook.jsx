@@ -16,18 +16,71 @@ const NewBook = (props) => {
     },
     update: (cache, response) => {
       console.log('response', response);
-      cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(response.data.addBook),
+      const oldBooks = cache.readQuery({ query: ALL_BOOKS, variables: { genre: genre } });
+
+      // All Books
+      if (oldBooks) {
+        const newBook = { ...response.data.AddBook };
+        console.debug('newBook', newBook);
+
+        cache.writeQuery({
+          query: ALL_BOOKS,
+          data: {
+            allBooks: [...oldBooks.allBooks, newBook],
+          },
+        });
+      } else {
+        console.debug('ALL_BOOKS is not cached. Skipping...');
+      }
+
+      // Books By Genre
+      const genres = response.data.addBook.genres;
+      console.debug('genres', genres);
+
+      genres.forEach((genre) => {
+        const oldBooksByGenre = cache.readQuery({ query: ALL_BOOKS, variables: { genre: genre } });
+        console.debug('oldBooksByGenre', oldBooksByGenre);
+
+        if (!oldBooksByGenre) {
+          console.debug(`no cache found with genre: ${genre}. Skipping...`);
+          return null;
+        }
+
+        const newBookByGenre = {
+          ...response.data.addBook,
         };
+
+        console.debug('newBooksByGenre', newBookByGenre);
+
+        cache.writeQuery({
+          query: ALL_BOOKS,
+          variables: { genre: genre },
+          data: {
+            allBooks: [...oldBooksByGenre.allBooks, newBookByGenre],
+          },
+        });
       });
-      cache.updateQuery({ query: ALL_AUTHORS }, ({ allAuthors }) => {
-        const foundAuthor = allAuthors.find((author) => author.id === response.data.addBook.author.id);
-        return {
-          allAuthors: foundAuthor
-            ? allAuthors.filter((author) => author.id !== foundAuthor.id).concat({ ...foundAuthor })
-            : allAuthors.concat(response.data.addBook.author),
-        };
+
+      // Authors
+      const oldAuthors = cache.readQuery({ query: ALL_AUTHORS });
+      console.debug('oldAuthors', oldAuthors);
+
+      if (!oldAuthors) {
+        console.debug('Authors is not cached. Skipping...');
+        return null;
+      }
+
+      const newAuthor = {
+        ...response.data.addBook.author,
+      };
+
+      console.debug('newAuthor', newAuthor);
+
+      cache.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: [...oldAuthors.allAuthors, newAuthor],
+        },
       });
     },
   });

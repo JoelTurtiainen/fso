@@ -8,8 +8,6 @@ const Login = (props) => {
   const [password, setPassword] = useState('');
   const [favoriteGenre, setFavoriteGenre] = useState('');
 
-  const resultUser = useQuery(ME);
-
   const [loginUser, loginResult] = useMutation(LOG_IN, {
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');

@@ -6,7 +6,7 @@ const Recommend = (props) => {
   const resultUser = useQuery(ME);
   const favoriteGenre = useMemo(() => resultUser.data?.me?.favoriteGenre, [resultUser]);
   const resultBook = useQuery(ALL_BOOKS, {
-    skip: !favoriteGenre,
+    skip: !favoriteGenre || !props.show,
     variables: { genre: favoriteGenre },
   });
 

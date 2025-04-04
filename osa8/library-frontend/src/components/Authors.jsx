@@ -6,9 +6,9 @@ const Authors = (props) => {
   const [name, setName] = useState(null);
   const [born, setBorn] = useState('');
   const [authors, setAuthors] = useState(null);
-  const result = useQuery(ALL_AUTHORS);
+  const result = useQuery(ALL_AUTHORS, { skip: !props.show });
 
-  const [editAuthor, editResult] = useMutation(EDIT_AUTHOR, {
+  const [editAuthor] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join('\n');
@@ -17,10 +17,10 @@ const Authors = (props) => {
   });
 
   useEffect(() => {
-    if (result.loading) return;
+    if (result.loading || !props.show) return;
     setAuthors(result.data.allAuthors);
     setName(result.data.allAuthors[0].name);
-  }, [result.data]);
+  }, [result]);
 
   if (!props.show) {
     return null;
