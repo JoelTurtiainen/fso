@@ -82,3 +82,45 @@ export const ME = gql`
     }
   }
 `;
+
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    genres
+    published
+    id
+    author {
+      name
+      born
+      id
+      bookCount
+    }
+  }
+`;
+
+export const AUTHOR_DETAILS = gql`
+  fragment AuthorDetails on Author {
+    name
+    born
+    id
+    bookCount
+  }
+`;
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`;
+
+export const AUTHOR_EDITED = gql`
+  subscription {
+    authorEdited {
+      ...AuthorDetails
+    }
+  }
+  ${AUTHOR_DETAILS}
+`;

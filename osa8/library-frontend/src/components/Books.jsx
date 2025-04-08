@@ -1,9 +1,12 @@
-import { useQuery } from '@apollo/client';
-import { ALL_BOOKS } from '../queries';
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client';
+import { ALL_BOOKS, BOOK_ADDED } from '../queries';
 import { useState, useEffect } from 'react';
+
 import styles from '../style.module.css';
+import { updateCache } from '../App';
 
 const Books = (props) => {
+  const client = useApolloClient();
   const [genreFilter, setGenreFilter] = useState('all');
   const [genres, setGenres] = useState(['all']);
   const result = useQuery(ALL_BOOKS, {
@@ -17,6 +20,15 @@ const Books = (props) => {
     }
     setGenres([...new Set(genres.concat(result.data?.allBooks.flatMap((book) => book.genres)))]);
   }, [result]);
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      const addedBook = data.data.bookAdded;
+      console.log('addedBook', addedBook);
+      props.setError(`${addedBook.title} added`);
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook, 'title');
+    },
+  });
 
   if (!props.show) {
     return null;

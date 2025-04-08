@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries';
+import { updateCache } from '../App';
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('');
@@ -15,73 +16,21 @@ const NewBook = (props) => {
       props.setError(messages);
     },
     update: (cache, response) => {
-      console.log('response', response);
-      const oldBooks = cache.readQuery({ query: ALL_BOOKS, variables: { genre: genre } });
+      console.debug('response.data', response.data);
 
-      // All Books
-      if (oldBooks) {
-        const newBook = { ...response.data.AddBook };
-        console.debug('newBook', newBook);
+      console.debug('Updating ALL_BOOKS');
+      updateCache(cache, { query: ALL_BOOKS }, response.data.addBook, 'title');
 
-        cache.writeQuery({
-          query: ALL_BOOKS,
-          data: {
-            allBooks: [...oldBooks.allBooks, newBook],
-          },
-        });
-      } else {
-        console.debug('ALL_BOOKS is not cached. Skipping...');
-      }
-
-      // Books By Genre
+      console.debug('Updating Books By Genre');
       const genres = response.data.addBook.genres;
-      console.debug('genres', genres);
 
       genres.forEach((genre) => {
-        const oldBooksByGenre = cache.readQuery({ query: ALL_BOOKS, variables: { genre: genre } });
-        console.debug('oldBooksByGenre', oldBooksByGenre);
-
-        if (!oldBooksByGenre) {
-          console.debug(`no cache found with genre: ${genre}. Skipping...`);
-          return null;
-        }
-
-        const newBookByGenre = {
-          ...response.data.addBook,
-        };
-
-        console.debug('newBooksByGenre', newBookByGenre);
-
-        cache.writeQuery({
-          query: ALL_BOOKS,
-          variables: { genre: genre },
-          data: {
-            allBooks: [...oldBooksByGenre.allBooks, newBookByGenre],
-          },
-        });
+        console.debug('genre', genre);
+        updateCache(cache, { query: ALL_BOOKS, variables: { genre: genre } }, response.data.addBook, 'title');
       });
 
-      // Authors
-      const oldAuthors = cache.readQuery({ query: ALL_AUTHORS });
-      console.debug('oldAuthors', oldAuthors);
-
-      if (!oldAuthors) {
-        console.debug('Authors is not cached. Skipping...');
-        return null;
-      }
-
-      const newAuthor = {
-        ...response.data.addBook.author,
-      };
-
-      console.debug('newAuthor', newAuthor);
-
-      cache.writeQuery({
-        query: ALL_AUTHORS,
-        data: {
-          allAuthors: [...oldAuthors.allAuthors, newAuthor],
-        },
-      });
+      console.debug('Updating Authors');
+      updateCache(cache, { query: ALL_AUTHORS }, response.data.addBook.author, 'name');
     },
   });
 
