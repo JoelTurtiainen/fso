@@ -15,6 +15,7 @@
     "@graphql-tools/schema": "^10.0.23",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dataloader": "^2.2.3",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "graphql": "^16.10.0",

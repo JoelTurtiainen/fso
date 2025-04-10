@@ -18,6 +18,7 @@ const Book = require('./models/book');
 
 const typeDefs = require('./schema/schema');
 const resolvers = require('./schema/resolvers');
+const bookCountLoader = require('./loaders/bookCountLoader');
 
 require('dotenv').config();
 
@@ -32,6 +33,8 @@ mongoose
   .catch((error) => {
     console.log('error connection to MongoDB:', error.message);
   });
+
+mongoose.set('debug', true);
 
 const start = async () => {
   const app = express();
@@ -73,8 +76,8 @@ const start = async () => {
         if (auth && auth.startsWith('Bearer ')) {
           const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET);
           const currentUser = await User.findById(decodedToken.id);
-          return { currentUser };
-        }
+          return { currentUser, bookCountLoader };
+        } else return { bookCountLoader };
       },
     })
   );

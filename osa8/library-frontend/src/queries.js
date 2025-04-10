@@ -1,30 +1,48 @@
 import { gql } from '@apollo/client';
 
-export const ALL_AUTHORS = gql`
-  query {
-    allAuthors {
-      bookCount
-      born
-      id
+const AUTHOR_DETAILS = gql`
+  fragment AuthorDetails on Author {
+    name
+    born
+    bookCount
+  }
+`;
+
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    genres
+    published
+    author {
       name
     }
   }
 `;
 
+const USER_DETAILS = gql`
+  fragment UserDetails on User {
+    username
+    favoriteGenre
+    id
+  }
+`;
+
+export const ALL_AUTHORS = gql`
+  query AllAuthors {
+    allAuthors {
+      ...AuthorDetails
+    }
+  }
+  ${AUTHOR_DETAILS}
+`;
+
 export const ALL_BOOKS = gql`
   query AllBooks($author: String, $genre: String) {
     allBooks(author: $author, genre: $genre) {
-      title
-      author {
-        name
-        __typename
-      }
-      genres
-      published
-      id
-      __typename
+      ...BookDetails
     }
   }
+  ${BOOK_DETAILS}
 `;
 
 export const CREATE_BOOK = gql`
@@ -32,11 +50,7 @@ export const CREATE_BOOK = gql`
     addBook(title: $title, author: $author, published: $published, genres: $genres) {
       title
       author {
-        name
-        bookCount
-        id
-        born
-        __typename
+        ...AuthorDetails
       }
       published
       genres
@@ -58,11 +72,10 @@ export const EDIT_AUTHOR = gql`
 export const CREATE_USER = gql`
   mutation CreateUser($username: String!, $favoriteGenre: String!) {
     createUser(username: $username, favoriteGenre: $favoriteGenre) {
-      favoriteGenre
-      id
-      username
+      ...UserDetails
     }
   }
+  ${USER_DETAILS}
 `;
 
 export const LOG_IN = gql`
@@ -76,35 +89,10 @@ export const LOG_IN = gql`
 export const ME = gql`
   query Me {
     me {
-      username
-      favoriteGenre
-      id
+      ...UserDetails
     }
   }
-`;
-
-const BOOK_DETAILS = gql`
-  fragment BookDetails on Book {
-    title
-    genres
-    published
-    id
-    author {
-      name
-      born
-      id
-      bookCount
-    }
-  }
-`;
-
-export const AUTHOR_DETAILS = gql`
-  fragment AuthorDetails on Author {
-    name
-    born
-    id
-    bookCount
-  }
+  ${USER_DETAILS}
 `;
 
 export const BOOK_ADDED = gql`

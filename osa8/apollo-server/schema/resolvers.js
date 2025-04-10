@@ -21,10 +21,7 @@ const resolvers = {
       if (args.genre) {
         query.genres = args.genre;
       }
-      return Book.find(query).populate('author', {
-        name: 1,
-        born: 1,
-      });
+      return Book.find(query).populate('author');
     },
     allAuthors: async () => Author.find({}),
     me: (root, args, context) => {
@@ -37,11 +34,8 @@ const resolvers = {
     id: (root) => root.id,
   },
   Author: {
-    bookCount: async ({ id }) => {
-      return Book.where({ author: id }).countDocuments();
-    },
-    allBooks: async ({ id }) => {
-      return Book.find({ author: id });
+    bookCount: async (root, args, { bookCountLoader }) => {
+      return await bookCountLoader.load(root._id);
     },
   },
   Mutation: {
