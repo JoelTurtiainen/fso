@@ -2,12 +2,13 @@ const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
 const { ApolloServerPluginDrainHttpServer } = require('@apollo/server/plugin/drainHttpServer');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
+const { WebSocketServer } = require('ws');
+const { useServer } = require('graphql-ws/use/ws');
+
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const jwt = require('jsonwebtoken');
-const { WebSocketServer } = require('ws');
-const { useServer } = require('graphql-ws/use/ws');
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
@@ -15,8 +16,8 @@ mongoose.set('strictQuery', false);
 const User = require('./models/user');
 const Book = require('./models/book');
 
-const typeDefs = require('./schema');
-const resolvers = require('./resolvers');
+const typeDefs = require('./schema/schema');
+const resolvers = require('./schema/resolvers');
 
 require('dotenv').config();
 

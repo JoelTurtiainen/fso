@@ -1,10 +1,11 @@
-const Author = require('./models/author');
-const Book = require('./models/book');
-const User = require('./models/user');
-const { GraphQLError, subscribe } = require('graphql');
-const jwt = require('jsonwebtoken');
+const { GraphQLError } = require('graphql');
 const { PubSub } = require('graphql-subscriptions');
 const pubsub = new PubSub();
+
+const Author = require('../models/author');
+const Book = require('../models/book');
+const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 const resolvers = {
   Query: {
