@@ -1,3 +1,10 @@
+import { clamp, isNotNumber } from './utils';
+
+interface exerciseValues {
+  target: number;
+  exerciseDays: number[];
+}
+
 interface Result {
   periodLength: number;
   trainingDays: number;
@@ -8,7 +15,18 @@ interface Result {
   average: number;
 }
 
-const clamp = (val: number, min: number, max: number): number => Math.min(Math.max(val, min), max);
+const parseExerciseArguments = (args: string[]): exerciseValues => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  if (!args.slice(3).some((arg) => isNotNumber(arg))) {
+    return {
+      target: Number(args[2]),
+      exerciseDays: args.slice(3).map((val) => Number(val)),
+    };
+  } else {
+    throw new Error('Provided values were not numbers!');
+  }
+};
 
 const getRatingDescription = (rating: number) => {
   if (rating < 1.5) return 'failed';
@@ -29,5 +47,13 @@ const calculateExercises = (target: number, hours: number[]): Result => {
   return { periodLength, trainingDays, success, rating, ratingDescription, target, average };
 };
 
-const test = calculateExercises(2, [2, 0, 3, 1.5, 3, 0, 4]);
-console.log(test);
+try {
+  const { target, exerciseDays } = parseExerciseArguments(process.argv);
+  console.log(calculateExercises(target, exerciseDays));
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened.';
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
