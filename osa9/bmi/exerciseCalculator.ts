@@ -2,7 +2,7 @@ import { clamp, isNotNumber } from './utils';
 
 interface exerciseValues {
   target: number;
-  exerciseDays: number[];
+  dailyExercises: number[];
 }
 
 interface Result {
@@ -21,7 +21,7 @@ const parseExerciseArguments = (args: string[]): exerciseValues => {
   if (!args.slice(3).some((arg) => isNotNumber(arg))) {
     return {
       target: Number(args[2]),
-      exerciseDays: args.slice(3).map((val) => Number(val)),
+      dailyExercises: args.slice(3).map((val) => Number(val)),
     };
   } else {
     throw new Error('Provided values were not numbers!');
@@ -36,7 +36,7 @@ const getRatingDescription = (rating: number) => {
   return 'perfect!';
 };
 
-const calculateExercises = (target: number, hours: number[]): Result => {
+export const calculateExercises = (target: number, hours: number[]): Result => {
   const periodLength = hours.length;
   const trainingDays = hours.filter((hour) => hour > 0).length;
   const success = target >= periodLength;
@@ -47,13 +47,15 @@ const calculateExercises = (target: number, hours: number[]): Result => {
   return { periodLength, trainingDays, success, rating, ratingDescription, target, average };
 };
 
-try {
-  const { target, exerciseDays } = parseExerciseArguments(process.argv);
-  console.log(calculateExercises(target, exerciseDays));
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happened.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
+if (require.main === module) {
+  try {
+    const { target, dailyExercises } = parseExerciseArguments(process.argv);
+    console.log(calculateExercises(target, dailyExercises));
+  } catch (error: unknown) {
+    let errorMessage = 'Something bad happened.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
