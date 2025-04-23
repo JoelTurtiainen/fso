@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { createDiary } from '../services/diaryService';
+import { DiaryFormProps } from '../types';
 
-const DiaryForm = () => {
+const DiaryForm = (props: DiaryFormProps) => {
   const [newDate, setNewDate] = useState('');
   const [newVisibility, setNewVisibility] = useState('');
   const [newWeather, setNewWeather] = useState('');
@@ -8,6 +10,10 @@ const DiaryForm = () => {
 
   const submitForm = (event: React.SyntheticEvent) => {
     event.preventDefault();
+    const newDiary = { date: newDate, visibility: newVisibility, weather: newWeather, comment: newComment };
+    createDiary(newDiary).then((data) => {
+      props.setDiaries(props.diaries.concat(data));
+    });
   };
 
   return (

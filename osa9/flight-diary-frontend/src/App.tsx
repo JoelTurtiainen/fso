@@ -17,7 +17,7 @@ const App = () => {
   return (
     <div>
       <Header name={'Add new entry'} />
-      <DiaryForm />
+      <DiaryForm diaries={diaries} setDiaries={setDiaries} />
       <Header name={'Diary entries'} />
       {diaries.map((diary) => (
         <Content key={diary.id} diary={diary} />
