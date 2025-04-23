@@ -1,8 +1,8 @@
-interface ContentProps {
-  name: string;
-  count: number;
-}
+import Part from './Part';
+import { CoursePart } from './types';
 
-const Content = (props: ContentProps) => <p> {props.name} {props.count} </p>
+const Content = ({ part }: { part: CoursePart }) => {
+  return <Part part={part} />;
+};
 
-export default Content
+export default Content;
