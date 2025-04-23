@@ -15,4 +15,5 @@ export interface HeaderProps {
 export interface DiaryFormProps {
   diaries: Diary[];
   setDiaries: React.Dispatch<React.SetStateAction<Diary[]>>;
+  notify: React.Dispatch<React.SetStateAction<string>>;
 }

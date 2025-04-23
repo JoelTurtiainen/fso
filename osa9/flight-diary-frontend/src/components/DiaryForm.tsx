@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createDiary } from '../services/diaryService';
 import { DiaryFormProps } from '../types';
+import axios from 'axios';
 
 const DiaryForm = (props: DiaryFormProps) => {
   const [newDate, setNewDate] = useState('');
@@ -11,9 +12,18 @@ const DiaryForm = (props: DiaryFormProps) => {
   const submitForm = (event: React.SyntheticEvent) => {
     event.preventDefault();
     const newDiary = { date: newDate, visibility: newVisibility, weather: newWeather, comment: newComment };
-    createDiary(newDiary).then((data) => {
-      props.setDiaries(props.diaries.concat(data));
-    });
+    createDiary(newDiary)
+      .then((data) => {
+        props.setDiaries(props.diaries.concat(data));
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          console.error(error.response);
+          props.notify(error.response?.data);
+        } else {
+          console.error(error);
+        }
+      });
   };
 
   return (
