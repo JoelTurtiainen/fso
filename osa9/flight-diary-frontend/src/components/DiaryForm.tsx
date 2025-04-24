@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { createDiary } from '../services/diaryService';
 import { DiaryFormProps } from '../types';
+import styles from '../style.module.css';
 import axios from 'axios';
 
 const DiaryForm = (props: DiaryFormProps) => {
@@ -16,8 +17,8 @@ const DiaryForm = (props: DiaryFormProps) => {
       .then((data) => {
         props.setDiaries(props.diaries.concat(data));
         setNewDate('');
-        setNewVisibility('');
-        setNewWeather('');
+        // setNewVisibility('');
+        // setNewWeather('');
         setNewComment('');
       })
       .catch((error) => {
@@ -32,23 +33,33 @@ const DiaryForm = (props: DiaryFormProps) => {
   };
 
   return (
-    <form onSubmit={submitForm}>
-      <div>
-        <label htmlFor="date">date</label>
-        <input id="date" value={newDate} onChange={(event) => setNewDate(event.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="visibility">visibility</label>
-        <input id="visibility" value={newVisibility} onChange={(event) => setNewVisibility(event.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="weather">weather</label>
-        <input id="weather" value={newWeather} onChange={(event) => setNewWeather(event.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="comment">comment</label>
+    <form onSubmit={submitForm} className={styles.form}>
+      <fieldset>
+        <legend>date</legend>
+        <input type="date" id="date" value={newDate} onChange={(event) => setNewDate(event.target.value)} />
+      </fieldset>
+      <fieldset className={styles.pl1}>
+        <legend>visibility</legend>
+        {['great', 'good', 'ok', 'poor'].map((v) => (
+          <React.Fragment key={v}>
+            <label htmlFor={v}>{v}</label>
+            <input type="radio" name="visibility" id={v} value={newVisibility} onChange={() => setNewVisibility(v)} />
+          </React.Fragment>
+        ))}
+      </fieldset>
+      <fieldset className={styles.pl1}>
+        <legend>weather</legend>
+        {['sunny', 'rainy', 'cloudy', 'stormy', 'windy'].map((v) => (
+          <React.Fragment key={v}>
+            <label htmlFor={v}>{v}</label>
+            <input type="radio" name="weather" id={v} value={newWeather} onChange={() => setNewWeather(v)} />
+          </React.Fragment>
+        ))}
+      </fieldset>
+      <fieldset>
+        <legend>comment</legend>
         <input id="comment" value={newComment} onChange={(event) => setNewComment(event.target.value)} />
-      </div>
+      </fieldset>
 
       <button type="submit">add</button>
     </form>

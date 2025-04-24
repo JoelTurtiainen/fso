@@ -6,3 +6,12 @@
 .notification {
   color: red;
 }
+
+.form {
+  label {
+    padding-left: 10px;
+  }
+  input {
+    margin-left: 10px;
+  }
+}
