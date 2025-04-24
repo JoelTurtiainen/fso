@@ -15,11 +15,16 @@ const DiaryForm = (props: DiaryFormProps) => {
     createDiary(newDiary)
       .then((data) => {
         props.setDiaries(props.diaries.concat(data));
+        setNewDate('');
+        setNewVisibility('');
+        setNewWeather('');
+        setNewComment('');
       })
       .catch((error) => {
-        if (axios.isAxiosError(error)) {
+        if (axios.isAxiosError(error) && typeof error.response?.data === 'string') {
           console.error(error.response);
-          props.notify(error.response?.data);
+          const errormsg = error.response.data.replace('Something went wrong. ', '');
+          props.notify(errormsg);
         } else {
           console.error(error);
         }

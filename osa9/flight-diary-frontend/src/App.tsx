@@ -14,8 +14,8 @@ const App = () => {
     getAllDiaries().then((data) => setDiaries(data));
   }, []);
 
-  const notify = (message: string) => {
-    setErrorMessage(message);
+  const notify = (value: string) => {
+    setErrorMessage(value);
     setTimeout(() => {
       setErrorMessage('');
     }, 5000);
