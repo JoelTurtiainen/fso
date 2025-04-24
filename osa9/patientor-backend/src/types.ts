@@ -22,9 +22,8 @@ export interface Diagnosis {
 //   occupation: string;
 // }
 
-export type NonSensitivePatientData = Omit<Patient, 'ssn'>;
+export type NonSensitivePatientData = Omit<Patient, 'ssn' | 'entries'>;
 export type NewPatientEntry = z.infer<typeof newPatientSchema>;
-
 export interface Patient extends NewPatientEntry {
   id: string;
 }
