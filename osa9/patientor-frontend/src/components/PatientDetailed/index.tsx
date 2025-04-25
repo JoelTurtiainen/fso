@@ -44,6 +44,21 @@ const PatientDetailed = () => {
         ssn: {patient.ssn} <br />
         occupation: {patient.occupation}
       </p>
+      {patient.entries.length > 0 && (
+        <>
+          <h2>entries</h2>
+          {patient.entries.map((entry) => (
+            <div key={entry.id}>
+              {entry.date} {entry.description}
+              <ul>
+                {entry?.diagnosisCodes?.map((code) => (
+                  <li key={code}>{code}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 };
