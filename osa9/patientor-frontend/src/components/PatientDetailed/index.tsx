@@ -1,13 +1,15 @@
 import { useParams } from "react-router-dom";
 import patientService from "../../services/patients";
+import diagnosisService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 
 const PatientDetailed = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const id = useParams().id;
 
   useEffect(() => {
@@ -16,7 +18,17 @@ const PatientDetailed = () => {
       const patient = await patientService.getOne(id);
       setPatient(patient);
     };
+
     void fetchPatient();
+
+    if (diagnoses.length > 0) return;
+
+    const fetchDiagnoses = async () => {
+      const diagnoses = await diagnosisService.getAll();
+      setDiagnoses(diagnoses);
+    };
+
+    void fetchDiagnoses();
   }, [id]);
 
   const genderIcon = (gender: string) => {
@@ -52,7 +64,9 @@ const PatientDetailed = () => {
               {entry.date} {entry.description}
               <ul>
                 {entry?.diagnosisCodes?.map((code) => (
-                  <li key={code}>{code}</li>
+                  <li key={code}>
+                    {code} {diagnoses.find((d) => d.code === code)?.name}
+                  </li>
                 ))}
               </ul>
             </div>
