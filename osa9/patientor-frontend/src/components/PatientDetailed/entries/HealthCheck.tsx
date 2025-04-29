@@ -1,5 +1,5 @@
 import { Diagnosis, HealthCheckEntry } from "../../../types";
-import { Medication as Icon, Favorite } from "@mui/icons-material";
+import { ContentPaste as Icon, Favorite } from "@mui/icons-material";
 
 interface Props {
   entry: HealthCheckEntry;
