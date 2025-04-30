@@ -2,10 +2,10 @@ import { z } from 'zod';
 import {
   Diagnosis,
   Gender,
-  HealthCheckEntry,
-  HospitalEntry,
+  NewHealthCheckEntry,
+  NewHospitalEntry,
+  NewOccupationalHealthcareEntry,
   NewPatientEntry,
-  OccupationalHealthcareEntry,
 } from './types';
 
 export const diagnosisSchema = z.object({
@@ -23,7 +23,6 @@ export const newPatientSchema = z.object({
 });
 
 const newEntrySchema = z.object({
-  id: z.string(),
   description: z.string(),
   date: z.string(),
   specialist: z.string(),
@@ -54,15 +53,15 @@ export const toNewDiagnosisEntry = (object: unknown): Diagnosis => {
   return diagnosisSchema.parse(object);
 };
 
-export const toNewHospitalEntry = (object: unknown): HospitalEntry => {
+export const toNewHospitalEntry = (object: unknown): NewHospitalEntry => {
   return hospitalSchema.parse(object);
 };
 
-export const toNewHealthCheckEntry = (object: unknown): HealthCheckEntry => {
+export const toNewHealthCheckEntry = (object: unknown): NewHealthCheckEntry => {
   return healthCheckSchema.parse(object);
 };
 
-export const toNewOccupationalHealthcareEntry = (object: unknown): OccupationalHealthcareEntry => {
+export const toNewOccupationalHealthcareEntry = (object: unknown): NewOccupationalHealthcareEntry => {
   return occupationalHealthcareSchema.parse(object);
 };
 

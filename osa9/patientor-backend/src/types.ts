@@ -16,6 +16,8 @@ export enum HealthCheckRating {
 
 export type Entry = HospitalEntry | OccupationalHealthcareEntry | HealthCheckEntry;
 
+export type NewEntry = NewHospitalEntry | NewOccupationalHealthcareEntry | NewHealthCheckEntry;
+
 export enum Gender {
   Male = 'male',
   Female = 'female',
@@ -23,13 +25,24 @@ export enum Gender {
 }
 
 export type NonSensitivePatientData = Omit<Patient, 'ssn' | 'entries'>;
+
 export type NewPatientEntry = z.infer<typeof newPatientSchema>;
+export type NewHospitalEntry = z.infer<typeof hospitalSchema>;
+export type NewHealthCheckEntry = z.infer<typeof healthCheckSchema>;
+export type NewOccupationalHealthcareEntry = z.infer<typeof occupationalHealthcareSchema>;
+
 export interface Patient extends NewPatientEntry {
   id: string;
   entries: Entry[];
 }
+export interface HospitalEntry extends NewHospitalEntry {
+  id: string;
+}
+export interface HealthCheckEntry extends NewHealthCheckEntry {
+  id: string;
+}
+export interface OccupationalHealthcareEntry extends NewOccupationalHealthcareEntry {
+  id: string;
+}
 
-export type HospitalEntry = z.infer<typeof hospitalSchema>;
-export type HealthCheckEntry = z.infer<typeof healthCheckSchema>;
-export type OccupationalHealthcareEntry = z.infer<typeof occupationalHealthcareSchema>;
 export type Diagnosis = z.infer<typeof diagnosisSchema>;
