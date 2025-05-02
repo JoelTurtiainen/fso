@@ -2,12 +2,17 @@ import express from 'express';
 import patientService from '../services/patientService';
 import { z } from 'zod';
 import { Response } from 'express';
-import { NonSensitivePatientData, Patient } from '../types';
+import { NewEntry, NonSensitivePatientData, Patient } from '../types';
 import toNewPatientEntry, {
   toNewHealthCheckEntry,
   toNewHospitalEntry,
   toNewOccupationalHealthcareEntry,
 } from '../util';
+
+interface RequestHeaders {
+  body: NewEntry;
+  params: { id: string };
+}
 
 const router = express.Router();
 
@@ -38,10 +43,9 @@ router.post('/', (req, res) => {
   }
 });
 
-router.post('/:id/entries', (req, res) => {
+router.post('/:id/entries', (req: RequestHeaders, res) => {
+  console.log('posting new entry for a patient!');
   const patientId = req.params.id;
-  console.log('patientId', patientId);
-  console.log('req.body', req.body);
 
   let newEntry;
   try {
@@ -56,6 +60,7 @@ router.post('/:id/entries', (req, res) => {
         newEntry = toNewHealthCheckEntry(req.body);
         break;
       default:
+        res.status(400).send();
         return;
     }
     const addedEntry = patientService.addEntry(newEntry, patientId);
