@@ -15,17 +15,17 @@ export const diagnosisSchema = z.object({
 });
 
 export const newPatientSchema = z.object({
-  name: z.string(),
+  name: z.string().min(2),
   dateOfBirth: z.string().date(),
-  ssn: z.string(),
+  ssn: z.string().min(2),
   gender: z.nativeEnum(Gender),
-  occupation: z.string(),
+  occupation: z.string().min(2),
 });
 
 const newEntrySchema = z.object({
-  description: z.string(),
-  date: z.string(),
-  specialist: z.string(),
+  description: z.string().min(2),
+  date: z.string().date(),
+  specialist: z.string().min(2),
   diagnosisCodes: z.array(z.string()).optional(),
 });
 
@@ -41,7 +41,7 @@ export const healthCheckSchema = newEntrySchema.extend({
 
 export const occupationalHealthcareSchema = newEntrySchema.extend({
   type: z.literal('OccupationalHealthcare'),
-  employerName: z.string(),
+  employerName: z.string().min(4),
   sickLeave: z.object({ startDate: z.string().date(), endDate: z.string().date() }).optional(),
 });
 

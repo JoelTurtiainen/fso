@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import patientService from "../../services/patients";
 import diagnosisService from "../../services/diagnoses";
-import { Diagnosis, Entry, Gender, Patient } from "../../types";
+import { Diagnosis, Entry, EntryFormValues, Gender, Patient, newEntry } from "../../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
@@ -10,11 +10,38 @@ import Hospital from "./entries/Hospital";
 import OccupationalHealthcare from "./entries/OccupationalHealthcare";
 import HealthCheck from "./entries/HealthCheck";
 import { assertNever } from "../../utils";
+import AddEntryForm from "./AddEntryForm";
+import axios from "axios";
+import { Alert } from "@mui/material";
 
 const PatientDetailed = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [error, setError] = useState<string>();
   const id = useParams().id;
+
+  const submitNewEntry = async (values: newEntry) => {
+    if (!patient || !("entries" in patient)) return;
+    try {
+      const newEntry = await patientService.createEntry(values, patient.id);
+      const newPatient = { ...patient };
+      newPatient.entries.push(newEntry);
+      setPatient(newPatient);
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === "string") {
+          const message = e.response.data.replace("Something went wrong. Error: ", "");
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -87,7 +114,8 @@ const PatientDetailed = () => {
         ssn: {patient.ssn} <br />
         occupation: {patient.occupation}
       </p>
-
+      {error && <Alert severity="error">{error}</Alert>}
+      <AddEntryForm onSubmit={submitNewEntry} />
       <div>
         <h2>entries</h2>
         {patient.entries.map((entry) => (

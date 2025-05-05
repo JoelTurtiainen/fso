@@ -1,3 +1,6 @@
+export type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
+// Define Entry without the 'id' property
+
 export interface Diagnosis {
   code: string;
   name: string;
@@ -35,8 +38,14 @@ export enum HealthCheckRating {
   "CriticalRisk" = 3,
 }
 
+export enum EntryType {
+  Hospital = "Hospital",
+  OcucpationalHealthCare = "OccupationalHealthcare",
+  HealthCheck = "HealthCheck",
+}
+
 export interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
+  type: EntryType.Hospital;
   discharge: {
     date: string;
     criteria: string;
@@ -44,12 +53,12 @@ export interface HospitalEntry extends BaseEntry {
 }
 
 export interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
+  type: EntryType.HealthCheck;
   healthCheckRating: HealthCheckRating;
 }
 
 export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: "OccupationalHealthcare";
+  type: EntryType.OcucpationalHealthCare;
   employerName: string;
   sickLeave?: {
     startDate: string;
@@ -57,9 +66,26 @@ export interface OccupationalHealthcareEntry extends BaseEntry {
   };
 }
 
-export type Entry =
-  | HospitalEntry
-  | OccupationalHealthcareEntry
-  | HealthCheckEntry;
+type BaseEntryType = {
+  id: string;
+  type: EntryType;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes?: Array<Diagnosis["code"]>;
+};
+
+type HospitalEntryType =
+  | {
+      type: EntryType.Hospital;
+      discharge: {
+        date: string;
+        criteria: string;
+      };
+    }
+  | BaseEntryType;
+
+export type Entry = HospitalEntryType; //| OccupationalHealthcareEntry | HealthCheckEntry;
+export type newEntry = UnionOmit<Entry, "id">;
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
