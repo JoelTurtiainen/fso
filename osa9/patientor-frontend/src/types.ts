@@ -23,14 +23,6 @@ export interface Patient {
   entries: Entry[];
 }
 
-interface BaseEntry {
-  id: string;
-  description: string;
-  date: string;
-  specialist: string;
-  diagnosisCodes?: Array<Diagnosis["code"]>;
-}
-
 export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
@@ -40,33 +32,11 @@ export enum HealthCheckRating {
 
 export enum EntryType {
   Hospital = "Hospital",
-  OcucpationalHealthCare = "OccupationalHealthcare",
+  OccupationalHealthcare = "OccupationalHealthcare",
   HealthCheck = "HealthCheck",
 }
 
-export interface HospitalEntry extends BaseEntry {
-  type: EntryType.Hospital;
-  discharge: {
-    date: string;
-    criteria: string;
-  };
-}
-
-export interface HealthCheckEntry extends BaseEntry {
-  type: EntryType.HealthCheck;
-  healthCheckRating: HealthCheckRating;
-}
-
-export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: EntryType.OcucpationalHealthCare;
-  employerName: string;
-  sickLeave?: {
-    startDate: string;
-    endDate: string;
-  };
-}
-
-type BaseEntryType = {
+export type BaseEntryType = {
   id: string;
   type: EntryType;
   description: string;
@@ -75,17 +45,32 @@ type BaseEntryType = {
   diagnosisCodes?: Array<Diagnosis["code"]>;
 };
 
-type HospitalEntryType =
-  | {
-      type: EntryType.Hospital;
-      discharge: {
-        date: string;
-        criteria: string;
-      };
-    }
-  | BaseEntryType;
+export type HospitalEntry = {
+  type: EntryType.Hospital;
+  discharge: {
+    date: string;
+    criteria: string;
+  };
+};
 
-export type Entry = HospitalEntryType; //| OccupationalHealthcareEntry | HealthCheckEntry;
-export type newEntry = UnionOmit<Entry, "id">;
+export type HealthCheck = {
+  type: EntryType.HealthCheck;
+  healthCheckRating: HealthCheckRating;
+};
+
+export type OccupationalHealthcare = {
+  type: EntryType.OccupationalHealthcare;
+  employerName: string;
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  };
+};
+
+export type ExtraOptions = HospitalEntry | HealthCheck | OccupationalHealthcare;
+
+export type Entry = BaseEntryType & ExtraOptions;
+
+export type NewEntry = Omit<Entry, "id">;
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;

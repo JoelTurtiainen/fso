@@ -2,14 +2,13 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import patientService from "../../services/patients";
 import diagnosisService from "../../services/diagnoses";
-import { Diagnosis, Entry, EntryFormValues, Gender, Patient, newEntry } from "../../types";
+import { Diagnosis, Entry, EntryType, Gender, NewEntry, Patient } from "../../types";
 import FemaleIcon from "@mui/icons-material/Female";
 import MaleIcon from "@mui/icons-material/Male";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import Hospital from "./entries/Hospital";
 import OccupationalHealthcare from "./entries/OccupationalHealthcare";
 import HealthCheck from "./entries/HealthCheck";
-import { assertNever } from "../../utils";
 import AddEntryForm from "./AddEntryForm";
 import axios from "axios";
 import { Alert } from "@mui/material";
@@ -20,7 +19,7 @@ const PatientDetailed = () => {
   const [error, setError] = useState<string>();
   const id = useParams().id;
 
-  const submitNewEntry = async (values: newEntry) => {
+  const submitNewEntry = async (values: NewEntry) => {
     if (!patient || !("entries" in patient)) return;
     try {
       const newEntry = await patientService.createEntry(values, patient.id);
@@ -87,14 +86,14 @@ const PatientDetailed = () => {
     } as React.CSSProperties;
 
     switch (entry.type) {
-      case "Hospital":
+      case EntryType.Hospital:
         return <Hospital style={style} entry={entry} diagnoses={diagnoses} />;
-      case "OccupationalHealthcare":
+      case EntryType.OccupationalHealthcare:
         return <OccupationalHealthcare style={style} entry={entry} diagnoses={diagnoses} />;
-      case "HealthCheck":
+      case EntryType.HealthCheck:
         return <HealthCheck style={style} entry={entry} diagnoses={diagnoses} />;
       default:
-        return assertNever(entry);
+        return;
     }
   };
 
@@ -118,7 +117,7 @@ const PatientDetailed = () => {
       <AddEntryForm onSubmit={submitNewEntry} />
       <div>
         <h2>entries</h2>
-        {patient.entries.map((entry) => (
+        {patient.entries.map((entry: Entry) => (
           <EntryDetails key={entry.id} entry={entry} />
         ))}
       </div>
