@@ -36,7 +36,7 @@ export const hospitalSchema = newEntrySchema.extend({
 
 export const healthCheckSchema = newEntrySchema.extend({
   type: z.literal('HealthCheck'),
-  healthCheckRating: z.number(),
+  healthCheckRating: z.number().gte(0).lte(3),
 });
 
 export const occupationalHealthcareSchema = newEntrySchema.extend({

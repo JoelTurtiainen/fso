@@ -3,6 +3,7 @@ import { useState, SyntheticEvent } from "react";
 import { TextField, Grid, Button, SelectChangeEvent, Select, MenuItem, InputLabel } from "@mui/material";
 
 import { Diagnosis, EntryType, NewEntry } from "../../types";
+import { isNotNumber } from "../../utils";
 
 interface Props {
   onSubmit: (values: NewEntry) => void;
@@ -84,7 +85,8 @@ const AddEntryForm = ({ onSubmit }: Props) => {
         const { opt1: healthCheckRating } = extraOptions;
         const entry = {
           ...baseEntry,
-          healthCheckRating: Number(healthCheckRating),
+          healthCheckRating:
+            !isNotNumber(healthCheckRating) && healthCheckRating != "" ? Number(healthCheckRating) : NaN,
         };
         onSubmit(entry);
         break;

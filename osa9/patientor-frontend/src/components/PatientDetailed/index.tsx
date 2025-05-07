@@ -16,8 +16,15 @@ import { Alert } from "@mui/material";
 const PatientDetailed = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<string>("");
   const id = useParams().id;
+
+  const notify = (message: string) => {
+    setError(message);
+    setTimeout(() => {
+      setError("");
+    }, 5000);
+  };
 
   const submitNewEntry = async (values: NewEntry) => {
     if (!patient || !("entries" in patient)) return;
@@ -28,16 +35,24 @@ const PatientDetailed = () => {
       setPatient(newPatient);
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
-        if (e?.response?.data && typeof e?.response?.data === "string") {
-          const message = e.response.data.replace("Something went wrong. Error: ", "");
-          console.error(message);
-          setError(message);
+        if (e?.response?.data) {
+          if (typeof e?.response?.data === "string") {
+            const message = e.response.data.replace("Something went wrong. Error: ", "");
+            console.error(message);
+            notify(message);
+          } else if (typeof e?.response?.data === "object") {
+            const { message, path }: { message: string; path: string[] } = e.response.data.error[0];
+            const errorMessage = `${path[0]} ${message.substring(message.indexOf(" ") + 1)}`;
+            console.error(errorMessage);
+            notify(errorMessage);
+          }
         } else {
-          setError("Unrecognized axios error");
+          console.log(e);
+          notify("Unrecognized axios error");
         }
       } else {
         console.error("Unknown error", e);
-        setError("Unknown error");
+        notify("Unknown error");
       }
     }
   };
