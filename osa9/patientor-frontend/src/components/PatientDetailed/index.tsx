@@ -11,7 +11,7 @@ import OccupationalHealthcare from "./entries/OccupationalHealthcare";
 import HealthCheck from "./entries/HealthCheck";
 import AddEntryForm from "./AddEntryForm";
 import axios from "axios";
-import { Alert } from "@mui/material";
+import { Alert, CircularProgress } from "@mui/material";
 
 const PatientDetailed = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -43,7 +43,7 @@ const PatientDetailed = () => {
           } else if (typeof e?.response?.data === "object") {
             const { message, path }: { message: string; path: string[] } = e.response.data.error[0];
             const errorMessage = `${path[0]} ${message.substring(message.indexOf(" ") + 1)}`;
-            console.error(errorMessage);
+            console.error(e.response.data.error[0]);
             notify(errorMessage);
           }
         } else {
@@ -113,7 +113,11 @@ const PatientDetailed = () => {
   };
 
   if (!patient) {
-    return <div>patient not found</div>;
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    );
   }
 
   console.log(diagnoses);

@@ -1,9 +1,12 @@
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, useEffect } from "react";
 
 import { TextField, Grid, Button, SelectChangeEvent, Select, MenuItem, InputLabel } from "@mui/material";
 
-import { Diagnosis, EntryType, NewEntry } from "../../types";
+import dayjs from "dayjs";
+import { Diagnosis, EntryType, ExtraOptions, NewEntry } from "../../types";
 import { isNotNumber } from "../../utils";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 interface Props {
   onSubmit: (values: NewEntry) => void;
@@ -20,12 +23,30 @@ const EntryOptions: EntryOption[] = Object.values(EntryType).map((v) => ({
 }));
 
 const AddEntryForm = ({ onSubmit }: Props) => {
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState<string | null>(null);
   const [type, setType] = useState<EntryType>(EntryType.Hospital);
   const [specialist, setSpecialist] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<Array<Diagnosis["code"]>>([]);
   const [description, setDescription] = useState("");
-  const [extraOptions, setExtraOptions] = useState({ opt1: "", opt2: "", opt3: "" }); // <--- beautiful
+  const [extraOptions, setExtraOptions] = useState<ExtraOptions | null>(null);
+
+  useEffect(() => {
+    switch (type) {
+      case EntryType.Hospital:
+        setExtraOptions({ type: EntryType.Hospital, discharge: { date: null, criteria: "" } });
+        break;
+      case EntryType.OccupationalHealthcare:
+        setExtraOptions({
+          type: EntryType.OccupationalHealthcare,
+          employerName: "",
+          sickLeave: { startDate: null, endDate: null },
+        });
+        break;
+      case EntryType.HealthCheck:
+        setExtraOptions({ type: EntryType.HealthCheck, healthCheckRating: 0 });
+        break;
+    }
+  }, [type]);
 
   const onEntryChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
@@ -34,7 +55,6 @@ const AddEntryForm = ({ onSubmit }: Props) => {
       const type = Object.values(EntryType).find((g) => g.toString() === value);
       if (type) {
         setType(type);
-        setExtraOptions({ opt1: "", opt2: "", opt3: "" });
       }
     }
   };
@@ -50,43 +70,43 @@ const AddEntryForm = ({ onSubmit }: Props) => {
       diagnosisCodes,
     };
 
-    switch (type) {
+    if (extraOptions === null) return;
+    switch (extraOptions.type) {
       case EntryType.Hospital: {
-        const { opt1: dischargeDate, opt2: dischargeCriteria } = extraOptions;
+        const { discharge } = extraOptions;
         const entry = {
           ...baseEntry,
           discharge: {
-            date: dischargeDate,
-            criteria: dischargeCriteria,
+            ...discharge,
+            date: discharge?.date ? discharge.date : null,
           },
         };
+        console.log(entry);
         onSubmit(entry);
         break;
       }
 
       case EntryType.OccupationalHealthcare: {
-        const { opt1: employerName, opt2: sickLeaveStart, opt3: sickLeaveEnd } = extraOptions;
+        const { employerName, sickLeave } = extraOptions;
         const entry = {
           ...baseEntry,
           employerName,
-          sickLeave:
-            sickLeaveStart && sickLeaveEnd
-              ? {
-                  startDate: sickLeaveStart,
-                  endDate: sickLeaveEnd,
-                }
-              : undefined,
         };
+        if (extraOptions.sickLeave) {
+          extraOptions.sickLeave = {
+            startDate: sickLeave?.startDate ? sickLeave?.startDate : null,
+            endDate: sickLeave?.endDate ? sickLeave?.endDate : null,
+          };
+        }
         onSubmit(entry);
         break;
       }
 
       case EntryType.HealthCheck: {
-        const { opt1: healthCheckRating } = extraOptions;
+        const { healthCheckRating } = extraOptions;
         const entry = {
           ...baseEntry,
-          healthCheckRating:
-            !isNotNumber(healthCheckRating) && healthCheckRating != "" ? Number(healthCheckRating) : NaN,
+          healthCheckRating: !isNotNumber(healthCheckRating) ? Number(healthCheckRating) : NaN,
         };
         onSubmit(entry);
         break;
@@ -98,9 +118,12 @@ const AddEntryForm = ({ onSubmit }: Props) => {
     }
   };
 
+  const style = { border: "1px solid grey", borderRadius: "10px", padding: "10px", marginTop: "10px" };
+
   return (
-    <div>
-      <form onSubmit={addEntry}>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <form onSubmit={addEntry} style={style}>
+        <InputLabel>Entry</InputLabel>
         <Select label="Entry" fullWidth value={type} onChange={onEntryChange}>
           {EntryOptions.map((option) => (
             <MenuItem key={option.label} value={option.value}>
@@ -108,83 +131,110 @@ const AddEntryForm = ({ onSubmit }: Props) => {
             </MenuItem>
           ))}
         </Select>
-        <TextField
-          label="Date"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
-        <TextField
-          label="Specialist"
-          fullWidth
-          value={specialist}
-          onChange={({ target }) => setSpecialist(target.value)}
-        />
-        <TextField
-          label="DiagnosisCodes"
-          fullWidth
-          value={diagnosisCodes}
-          onChange={({ target }) => setDiagnosisCodes(target.value.split(","))}
-        />
-        <TextField
-          label="Description"
-          fullWidth
-          value={description}
-          onChange={({ target }) => setDescription(target.value)}
-        />
-        {type === EntryType.Hospital ? (
-          <>
-            <InputLabel style={{ marginTop: 20 }}>Discharge:</InputLabel>
-            <TextField
-              label="Date"
-              placeholder="YYYY-MM-DD"
-              fullWidth
-              value={extraOptions.opt1}
-              onChange={({ target }) => setExtraOptions({ ...extraOptions, opt1: target.value })}
-            />
-            <TextField
-              label="Criteria"
-              fullWidth
-              value={extraOptions.opt2}
-              onChange={({ target }) => setExtraOptions({ ...extraOptions, opt2: target.value })}
-            />
-          </>
-        ) : type === EntryType.OccupationalHealthcare ? (
-          <>
-            <TextField
-              label="Employer Name"
-              fullWidth
-              value={extraOptions.opt1}
-              onChange={({ target }) => setExtraOptions({ ...extraOptions, opt1: target.value })}
-            />
-            <InputLabel style={{ marginTop: 20 }}>Sick Leave:</InputLabel>
-            <TextField
-              label="Start date"
-              placeholder="YYYY-MM-DD"
-              fullWidth
-              value={extraOptions.opt2}
-              onChange={({ target }) => setExtraOptions({ ...extraOptions, opt2: target.value })}
-            />
-            <TextField
-              label="End date"
-              fullWidth
-              value={extraOptions.opt3}
-              onChange={({ target }) => setExtraOptions({ ...extraOptions, opt3: target.value })}
-            />
-          </>
-        ) : type === EntryType.HealthCheck ? (
-          <>
-            <TextField
-              label="Health check rating"
-              fullWidth
-              value={extraOptions.opt1}
-              onChange={({ target }) => setExtraOptions({ ...extraOptions, opt1: target.value })}
-            />
-          </>
-        ) : (
-          <></>
-        )}
+        <div style={style}>
+          <h3>New {type} entry</h3>
+
+          <DatePicker
+            label="Date"
+            format="YYYY-MM-DD"
+            value={typeof date === "string" ? dayjs(date) : null}
+            onChange={(newValue) => setDate(newValue ? newValue.format("YYYY-MM-DD") : null)}
+          />
+          <TextField
+            label="Specialist"
+            fullWidth
+            value={specialist}
+            onChange={({ target }) => setSpecialist(target.value)}
+          />
+          <TextField
+            label="DiagnosisCodes"
+            fullWidth
+            value={diagnosisCodes}
+            onChange={({ target }) => setDiagnosisCodes(target.value.split(","))}
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            value={description}
+            onChange={({ target }) => setDescription(target.value)}
+          />
+
+          {extraOptions && extraOptions.type === EntryType.Hospital ? (
+            <>
+              <InputLabel style={{ marginTop: 20 }}>Discharge:</InputLabel>
+
+              <DatePicker
+                label="Date"
+                format="YYYY-MM-DD"
+                value={extraOptions.discharge?.date ? dayjs(extraOptions.discharge.date) : null}
+                onChange={(newValue) =>
+                  setExtraOptions({
+                    ...extraOptions,
+                    discharge: { ...extraOptions.discharge, date: newValue ? newValue.format("YYYY-MM-DD") : null },
+                  })
+                }
+              />
+
+              <TextField
+                label="Criteria"
+                fullWidth
+                value={extraOptions.discharge?.criteria}
+                onChange={({ target }) =>
+                  setExtraOptions({ ...extraOptions, discharge: { ...extraOptions.discharge, criteria: target.value } })
+                }
+              />
+            </>
+          ) : extraOptions && extraOptions?.type === EntryType.OccupationalHealthcare ? (
+            <>
+              <TextField
+                label="Employer Name"
+                fullWidth
+                value={extraOptions.employerName}
+                onChange={({ target }) => setExtraOptions({ ...extraOptions, employerName: target.value })}
+              />
+
+              <InputLabel style={{ marginTop: 20 }}>Sick Leave:</InputLabel>
+              <DatePicker
+                label="Start date"
+                format="YYYY-MM-DD"
+                value={extraOptions.sickLeave?.startDate ? dayjs(extraOptions.sickLeave.startDate) : null}
+                onChange={(newValue) =>
+                  setExtraOptions({
+                    ...extraOptions,
+                    sickLeave: extraOptions.sickLeave
+                      ? { ...extraOptions.sickLeave, startDate: newValue ? newValue.format("YYYY-MM-DD") : null }
+                      : undefined,
+                  })
+                }
+              />
+              <DatePicker
+                label="End date"
+                format="YYYY-MM-DD"
+                value={extraOptions.sickLeave?.endDate ? dayjs(extraOptions.sickLeave.endDate) : null}
+                onChange={(newValue) =>
+                  setExtraOptions({
+                    ...extraOptions,
+                    sickLeave: extraOptions.sickLeave
+                      ? { ...extraOptions.sickLeave, endDate: newValue ? newValue.format("YYYY-MM-DD") : null }
+                      : undefined,
+                  })
+                }
+              />
+            </>
+          ) : extraOptions && extraOptions?.type === EntryType.HealthCheck ? (
+            <>
+              <TextField
+                label="Health check rating"
+                type="number"
+                fullWidth
+                value={extraOptions}
+                onChange={({ target }) => setExtraOptions({ ...extraOptions, healthCheckRating: Number(target.value) })}
+              />
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
 
         <Grid>
           <Grid item></Grid>
@@ -201,7 +251,7 @@ const AddEntryForm = ({ onSubmit }: Props) => {
           </Grid>
         </Grid>
       </form>
-    </div>
+    </LocalizationProvider>
   );
 };
 

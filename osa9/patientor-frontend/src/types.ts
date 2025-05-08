@@ -40,17 +40,19 @@ export type BaseEntryType = {
   id: string;
   type: EntryType;
   description: string;
-  date: string;
+  date: string | null;
   specialist: string;
   diagnosisCodes?: Array<Diagnosis["code"]>;
 };
 
+type Discharge = {
+  date: string | null;
+  criteria: string;
+};
+
 export type HospitalEntry = {
   type: EntryType.Hospital;
-  discharge: {
-    date: string;
-    criteria: string;
-  };
+  discharge: Discharge;
 };
 
 export type HealthCheck = {
@@ -58,13 +60,15 @@ export type HealthCheck = {
   healthCheckRating: HealthCheckRating;
 };
 
+type SickLeave = {
+  startDate: string | null;
+  endDate: string | null;
+};
+
 export type OccupationalHealthcare = {
   type: EntryType.OccupationalHealthcare;
   employerName: string;
-  sickLeave?: {
-    startDate: string;
-    endDate: string;
-  };
+  sickLeave?: SickLeave;
 };
 
 export type ExtraOptions = HospitalEntry | HealthCheck | OccupationalHealthcare;
