@@ -1,7 +1,7 @@
-import { Diagnosis, HospitalEntry } from "../../../types";
-import { Medication as Icon } from "@mui/icons-material";
+import { BaseEntryType, Diagnosis, HospitalEntry } from "../../../types";
+import { LocalHospital as Icon } from "@mui/icons-material";
 interface Props {
-  entry: HospitalEntry;
+  entry: HospitalEntry & BaseEntryType;
   diagnoses: Diagnosis[];
   style: React.CSSProperties;
 }
@@ -9,9 +9,10 @@ interface Props {
 const Hospital = ({ style, entry, diagnoses }: Props) => {
   return (
     <div style={style}>
-      {entry.date} <Icon />
-      <br />
-      {entry.description}
+      <p>
+        {entry.date} <Icon />
+      </p>
+      <p>{entry.description}</p>
       <ul>
         {entry?.diagnosisCodes?.map((code) => (
           <li key={code}>
@@ -19,7 +20,7 @@ const Hospital = ({ style, entry, diagnoses }: Props) => {
           </li>
         ))}
       </ul>
-      diagnose by {entry.specialist}
+      <p>diagnose by {entry.specialist}</p>
     </div>
   );
 };

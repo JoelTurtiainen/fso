@@ -41,7 +41,7 @@ export const healthCheckSchema = newEntrySchema.extend({
 
 export const occupationalHealthcareSchema = newEntrySchema.extend({
   type: z.literal('OccupationalHealthcare'),
-  employerName: z.string().min(4),
+  employerName: z.string().min(2),
   sickLeave: z.object({ startDate: z.string().date(), endDate: z.string().date() }).optional(),
 });
 

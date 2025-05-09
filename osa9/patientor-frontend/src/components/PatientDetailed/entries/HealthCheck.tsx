@@ -1,8 +1,8 @@
-import { Diagnosis, HealthCheckEntry } from "../../../types";
+import { BaseEntryType, Diagnosis, HealthCheckEntry } from "../../../types";
 import { ContentPaste as Icon, Favorite } from "@mui/icons-material";
 
 interface Props {
-  entry: HealthCheckEntry;
+  entry: HealthCheckEntry & BaseEntryType;
   diagnoses: Diagnosis[];
   style: React.CSSProperties;
 }
@@ -25,9 +25,10 @@ const HealthRating = ({ rating }: { rating: number }) => {
 const HealthCheck = ({ style, entry, diagnoses }: Props) => {
   return (
     <div style={style}>
-      {entry.date} <Icon />
-      <br />
-      {entry.description}
+      <p>
+        {entry.date} <Icon />
+      </p>
+      <p>{entry.description}</p>
       <ul>
         {entry?.diagnosisCodes?.map((code) => (
           <li key={code}>
@@ -35,8 +36,8 @@ const HealthCheck = ({ style, entry, diagnoses }: Props) => {
           </li>
         ))}
       </ul>
-      <HealthRating rating={entry.healthCheckRating} /> <br />
-      diagnose by {entry.specialist}
+      <HealthRating rating={entry.healthCheckRating} />
+      <p>diagnose by {entry.specialist}</p>
     </div>
   );
 };

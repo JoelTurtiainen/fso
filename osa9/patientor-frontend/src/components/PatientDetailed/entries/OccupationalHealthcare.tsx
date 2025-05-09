@@ -1,18 +1,20 @@
-import { Diagnosis, OccupationalHealthcareEntry } from "../../../types";
+import { BaseEntryType, Diagnosis, OccupationalHealthcareEntry } from "../../../types";
 import { Work as Icon } from "@mui/icons-material";
 
 interface Props {
-  entry: OccupationalHealthcareEntry;
+  entry: OccupationalHealthcareEntry & BaseEntryType;
   diagnoses: Diagnosis[];
   style: React.CSSProperties;
 }
 
 const HealthCheck = ({ style, entry, diagnoses }: Props) => {
+  console.log(entry);
   return (
     <div style={style}>
-      {entry.date}
-      <Icon />
-      <br />
+      <p>
+        {entry.date}
+        <Icon />
+      </p>
       {entry.description}
       <ul>
         {entry?.diagnosisCodes?.map((code) => (
@@ -21,7 +23,13 @@ const HealthCheck = ({ style, entry, diagnoses }: Props) => {
           </li>
         ))}
       </ul>
-      diagnose by {entry.specialist}
+      {entry.sickLeave?.startDate && (
+        <p>
+          Sick Leave: {entry.sickLeave.startDate} - {entry.sickLeave.endDate}
+        </p>
+      )}
+      <p>Employer: {entry.employerName}</p>
+      <p>diagnose by {entry.specialist}</p>
     </div>
   );
 };

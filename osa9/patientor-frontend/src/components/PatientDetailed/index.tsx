@@ -15,10 +15,10 @@ import { Alert, CircularProgress } from "@mui/material";
 
 const PatientDetailed = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [allDiagnoses, setAllDiagnoses] = useState<Diagnosis[]>([]);
+  const [patientDiagnoses, setPatientDiagnoses] = useState<Diagnosis[]>([]);
   const [error, setError] = useState<string>("");
   const id = useParams().id;
-
   const notify = (message: string) => {
     setError(message);
     setTimeout(() => {
@@ -63,22 +63,22 @@ const PatientDetailed = () => {
       const patient = await patientService.getOne(id);
       setPatient(patient);
     };
+
     void fetchPatient();
+    const fetchDiagnoses = async () => {
+      const diag = await diagnosisService.getAll();
+      typeof diag === typeof allDiagnoses ? setAllDiagnoses(diag) : [];
+    };
+
+    void fetchDiagnoses();
   }, [id]);
 
   useEffect(() => {
     if (!patient) return;
-
-    const fetchDiagnoses = async (patient: Patient) => {
-      const diag = await diagnosisService.getAll();
-      const diagCodes = patient.entries.flatMap((entry) => entry.diagnosisCodes);
-
-      if (!diagCodes) return;
-
-      setDiagnoses(diag.filter((d) => diagCodes.includes(d.code)));
-    };
-    void fetchDiagnoses(patient);
-  }, [patient]);
+    const diagCodes = patient.entries.flatMap((entry) => entry.diagnosisCodes);
+    if (!diagCodes) return;
+    setPatientDiagnoses(allDiagnoses.filter((d) => diagCodes.includes(d.code)));
+  }, [allDiagnoses, patient]);
 
   const genderIcon = (gender: Gender) => {
     switch (gender) {
@@ -102,11 +102,11 @@ const PatientDetailed = () => {
 
     switch (entry.type) {
       case EntryType.Hospital:
-        return <Hospital style={style} entry={entry} diagnoses={diagnoses} />;
+        return <Hospital style={style} entry={entry} diagnoses={patientDiagnoses} />;
       case EntryType.OccupationalHealthcare:
-        return <OccupationalHealthcare style={style} entry={entry} diagnoses={diagnoses} />;
+        return <OccupationalHealthcare style={style} entry={entry} diagnoses={patientDiagnoses} />;
       case EntryType.HealthCheck:
-        return <HealthCheck style={style} entry={entry} diagnoses={diagnoses} />;
+        return <HealthCheck style={style} entry={entry} diagnoses={patientDiagnoses} />;
       default:
         return;
     }
@@ -120,8 +120,6 @@ const PatientDetailed = () => {
     );
   }
 
-  console.log(diagnoses);
-
   return (
     <div>
       <h2>
@@ -133,7 +131,7 @@ const PatientDetailed = () => {
         occupation: {patient.occupation}
       </p>
       {error && <Alert severity="error">{error}</Alert>}
-      <AddEntryForm onSubmit={submitNewEntry} />
+      <AddEntryForm onSubmit={submitNewEntry} allDiagnoses={allDiagnoses} />
       <div>
         <h2>entries</h2>
         {patient.entries.map((entry: Entry) => (

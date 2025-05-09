@@ -45,33 +45,29 @@ export type BaseEntryType = {
   diagnosisCodes?: Array<Diagnosis["code"]>;
 };
 
-type Discharge = {
-  date: string | null;
-  criteria: string;
-};
-
 export type HospitalEntry = {
   type: EntryType.Hospital;
-  discharge: Discharge;
+  discharge: {
+    date: string | null;
+    criteria: string;
+  };
 };
 
-export type HealthCheck = {
+export type HealthCheckEntry = {
   type: EntryType.HealthCheck;
   healthCheckRating: HealthCheckRating;
 };
 
-type SickLeave = {
-  startDate: string | null;
-  endDate: string | null;
-};
-
-export type OccupationalHealthcare = {
+export type OccupationalHealthcareEntry = {
   type: EntryType.OccupationalHealthcare;
   employerName: string;
-  sickLeave?: SickLeave;
+  sickLeave?: {
+    startDate: string | null;
+    endDate: string | null;
+  };
 };
 
-export type ExtraOptions = HospitalEntry | HealthCheck | OccupationalHealthcare;
+export type ExtraOptions = HospitalEntry | HealthCheckEntry | OccupationalHealthcareEntry;
 
 export type Entry = BaseEntryType & ExtraOptions;
 

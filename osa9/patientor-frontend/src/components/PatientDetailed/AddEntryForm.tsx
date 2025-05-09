@@ -1,15 +1,17 @@
 import { useState, SyntheticEvent, useEffect } from "react";
 
-import { TextField, Grid, Button, SelectChangeEvent, Select, MenuItem, InputLabel } from "@mui/material";
+import { TextField, Grid, Button, SelectChangeEvent, Select, MenuItem, InputLabel, Input } from "@mui/material";
 
 import dayjs from "dayjs";
 import { Diagnosis, EntryType, ExtraOptions, NewEntry } from "../../types";
 import { isNotNumber } from "../../utils";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import MultipleSelectionCodes from "./MultipleSelectionCodes";
 
 interface Props {
   onSubmit: (values: NewEntry) => void;
+  allDiagnoses: Diagnosis[];
 }
 
 interface EntryOption {
@@ -22,7 +24,7 @@ const EntryOptions: EntryOption[] = Object.values(EntryType).map((v) => ({
   label: v.toString(),
 }));
 
-const AddEntryForm = ({ onSubmit }: Props) => {
+const AddEntryForm = ({ onSubmit, allDiagnoses }: Props) => {
   const [date, setDate] = useState<string | null>(null);
   const [type, setType] = useState<EntryType>(EntryType.Hospital);
   const [specialist, setSpecialist] = useState("");
@@ -91,13 +93,13 @@ const AddEntryForm = ({ onSubmit }: Props) => {
         const entry = {
           ...baseEntry,
           employerName,
+          ...(sickLeave && {
+            sickLeave: {
+              startDate: sickLeave?.startDate ? sickLeave?.startDate : null,
+              endDate: sickLeave?.endDate ? sickLeave?.endDate : null,
+            },
+          }),
         };
-        if (extraOptions.sickLeave) {
-          extraOptions.sickLeave = {
-            startDate: sickLeave?.startDate ? sickLeave?.startDate : null,
-            endDate: sickLeave?.endDate ? sickLeave?.endDate : null,
-          };
-        }
         onSubmit(entry);
         break;
       }
@@ -146,11 +148,10 @@ const AddEntryForm = ({ onSubmit }: Props) => {
             value={specialist}
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          <TextField
-            label="DiagnosisCodes"
-            fullWidth
-            value={diagnosisCodes}
-            onChange={({ target }) => setDiagnosisCodes(target.value.split(","))}
+          <MultipleSelectionCodes
+            allDiagnoses={allDiagnoses}
+            diagnosisCodes={diagnosisCodes}
+            setDiagnosisCodes={setDiagnosisCodes}
           />
           <TextField
             label="Description"
@@ -223,11 +224,11 @@ const AddEntryForm = ({ onSubmit }: Props) => {
             </>
           ) : extraOptions && extraOptions?.type === EntryType.HealthCheck ? (
             <>
-              <TextField
-                label="Health check rating"
+              <InputLabel>Health Check Rating:</InputLabel>
+              <Input
                 type="number"
                 fullWidth
-                value={extraOptions}
+                value={extraOptions.healthCheckRating}
                 onChange={({ target }) => setExtraOptions({ ...extraOptions, healthCheckRating: Number(target.value) })}
               />
             </>
