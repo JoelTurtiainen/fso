@@ -7,8 +7,6 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
     backgroundColor: theme.colors.textPrimary,
-    flexGrow: 1,
-    flexShrink: 1,
     padding: 12,
   },
 });
