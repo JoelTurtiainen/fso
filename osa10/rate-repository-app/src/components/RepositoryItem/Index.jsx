@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import theme from '../../theme';
 import Header from './Header';
+import Stats from './Stats';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,6 +16,7 @@ const styles = StyleSheet.create({
 const RepositoryItem = ({ data }) => (
   <View style={styles.container}>
     <Header data={data} />
+    <Stats data={data} />
   </View>
 );
 

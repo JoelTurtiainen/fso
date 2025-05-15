@@ -1,14 +1,15 @@
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Stat from './Stat';
 
 const styles = StyleSheet.create({
   stats: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    marginTop: 10,
   },
 });
 
-const Stats = () => (
+const Stats = ({ data }) => (
   <View style={styles.stats}>
     <Stat label={'Stars'} count={data.stargazersCount} />
     <Stat label={'Forks'} count={data.forksCount} />
