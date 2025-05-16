@@ -4,7 +4,7 @@
  */
 
 const config = {
-  printWidth: 100,
+  printWidth: 80,
   useTabs: false,
   tabWidth: 2,
   trailingComma: 'es5',

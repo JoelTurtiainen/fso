@@ -1,34 +1,62 @@
 import { Pressable, StyleSheet, View, TextInput } from 'react-native';
-import Text from './Text';
 import { useFormik } from 'formik';
+import * as yup from 'yup';
+
+import Text from './Text';
 import theme from '../theme';
+
+const initialValues = {
+  username: '',
+  password: '',
+}
+
+const validationSchema = yup.object().shape({
+  username: yup
+    .string()
+    .min(3, 'Username must be greater or equal to 3')
+    .required('Username is a required field'),
+  password: yup
+    .string()
+    .min(8, 'Password must be greater or equal to 8')
+    .required('Password is a required field')
+})
+
+const onSubmit = (values) => {
+  alert(JSON.stringify(values, null, 2));
+}
 
 const SignIn = () => {
   const formik = useFormik({
-    initialValues: {
-      username: '',
-      password: '',
-    },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    },
+    initialValues,
+    validationSchema,
+    onSubmit
   });
+
+  const isInvalid = (key) => (
+    Boolean(formik?.touched[key] && formik?.errors[key])
+  )
 
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={[styles.input, isInvalid('username') && styles.errorBorder]}
         onChangeText={formik.handleChange('username')}
         value={formik.values.firstName}
         placeholder="Username"
       />
+      {isInvalid('username') && (
+        <Text style={styles.error}>{formik.errors.username}</Text>
+      )}
       <TextInput
         secureTextEntry
-        style={styles.input}
+        style={[styles.input, isInvalid('password') && styles.errorBorder]}
         onChangeText={formik.handleChange('password')}
         value={formik.values.firstName}
         placeholder="Password"
       />
+      {isInvalid('password') && (
+        <Text style={styles.error}>{formik.errors.password}</Text>
+      )}
       <Pressable style={[styles.input, styles.button]} onPress={formik.handleSubmit}>
         <Text fontWeight="bold" color="bgPrimary">
           Sign in
@@ -56,6 +84,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 0,
   },
+  errorBorder: {
+    borderColor: theme.colors.error
+  },
+  error: {
+    color: theme.colors.error,
+    marginHorizontal: 10,
+    padding: 3,
+  },
+
 });
 
 export default SignIn;
