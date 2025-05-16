@@ -1,14 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import Stat from './Stat';
 
-const styles = StyleSheet.create({
-  stats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
-  },
-});
-
 const Stats = ({ data }) => (
   <View style={styles.stats}>
     <Stat label={'Stars'} count={data.stargazersCount} />
@@ -17,5 +9,13 @@ const Stats = ({ data }) => (
     <Stat label={'Rating'} count={data.ratingAverage} />
   </View>
 );
+
+const styles = StyleSheet.create({
+  stats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+});
 
 export default Stats;

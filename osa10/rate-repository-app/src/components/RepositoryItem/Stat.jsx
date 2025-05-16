@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import Text from '../Text';
-import { approx } from '../../utils';
+import { approx } from '../../utils/utils';
 
 const styles = StyleSheet.create({
   item: {

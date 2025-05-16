@@ -2,6 +2,30 @@ import { Image, StyleSheet, View } from 'react-native';
 import Text from '../Text';
 import theme from '../../theme';
 
+const Header = ({ data }) => (
+  <View style={styles.container}>
+    <View>
+      <Image style={styles.logo} source={{ uri: data.ownerAvatarUrl }} />
+    </View>
+
+    <View style={styles.item}>
+      <View>
+        <Text fontWeight="bold" fontSize="subheading">
+          {data.fullName}
+        </Text>
+      </View>
+
+      <View>
+        <Text color="textSecondary">{data.description}</Text>
+      </View>
+
+      <View style={styles.language}>
+        <Text style={styles.language}>{data.language}</Text>
+      </View>
+    </View>
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -26,29 +50,5 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
 });
-
-const Header = ({ data }) => (
-  <View style={styles.container}>
-    <View>
-      <Image style={styles.logo} source={{ uri: data.ownerAvatarUrl }} />
-    </View>
-
-    <View style={styles.item}>
-      <View>
-        <Text fontWeight="bold" fontSize="subheading">
-          {data.fullName}
-        </Text>
-      </View>
-
-      <View>
-        <Text color="textSecondary">{data.description}</Text>
-      </View>
-
-      <View style={styles.language}>
-        <Text style={styles.language}>{data.language}</Text>
-      </View>
-    </View>
-  </View>
-);
 
 export default Header;

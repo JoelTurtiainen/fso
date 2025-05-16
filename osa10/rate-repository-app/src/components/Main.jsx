@@ -6,13 +6,7 @@ import theme from '../theme';
 import AppBar from './AppBar';
 import SignIn from './SignIn';
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: theme.colors.backgroundSecondary,
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-});
+
 
 const Main = () => {
   return (
@@ -26,5 +20,13 @@ const Main = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: theme.colors.backgroundSecondary,
+    flexGrow: 1,
+    flexShrink: 1,
+  },
+});
 
 export default Main;

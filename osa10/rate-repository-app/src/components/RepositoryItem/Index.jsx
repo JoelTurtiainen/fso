@@ -3,6 +3,15 @@ import theme from '../../theme';
 import Header from './Header';
 import Stats from './Stats';
 
+
+
+const RepositoryItem = ({ data }) => (
+  <View style={styles.container}>
+    <Header data={data} />
+    <Stats data={data} />
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -12,12 +21,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-
-const RepositoryItem = ({ data }) => (
-  <View style={styles.container}>
-    <Header data={data} />
-    <Stats data={data} />
-  </View>
-);
 
 export default RepositoryItem;

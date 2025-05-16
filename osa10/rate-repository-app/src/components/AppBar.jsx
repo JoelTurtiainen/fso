@@ -5,17 +5,6 @@ import Text from './Text';
 import theme from '../theme';
 import { ScrollView } from 'react-native';
 
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: theme.colors.textPrimary,
-    padding: 5,
-  },
-  link: {
-    padding: 10,
-  },
-});
-
 const AppBar = () => {
   return (
     <View style={styles.container}>
@@ -34,5 +23,16 @@ const AppBar = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: theme.colors.textPrimary,
+    padding: 5,
+  },
+  link: {
+    padding: 10,
+  },
+});
 
 export default AppBar;
