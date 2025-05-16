@@ -6,7 +6,7 @@ const App = () => {
   return (
     <>
       <NativeRouter>
-        <Main />;
+        <Main />
       </NativeRouter>
       <StatusBar style="auto" />
     </>
