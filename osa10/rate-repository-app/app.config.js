@@ -12,6 +12,7 @@ export default {
     jsEngine: 'jsc',
     extra: {
       env: process.env.ENV,
+      apolloUri: process.env.APOLLO_URI,
     },
     splash: {
       image: './assets/splash-icon.png',

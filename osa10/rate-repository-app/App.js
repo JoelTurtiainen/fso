@@ -11,14 +11,12 @@ const apolloClient = createApolloClient();
 const App = () => {
   useApolloClientDevTools(apolloClient);
   return (
-    <>
-      <NativeRouter>
-        <ApolloProvider client={apolloClient}>
-          <Main />
-        </ApolloProvider>
-      </NativeRouter>
+    <NativeRouter>
+      <ApolloProvider client={apolloClient}>
+        <Main />
+      </ApolloProvider>
       <StatusBar style="auto" />
-    </>
+    </NativeRouter>
   );
 };
 

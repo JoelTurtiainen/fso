@@ -16,6 +16,7 @@
     "@expo/metro-runtime": "~5.0.4",
     "dotenv": "^16.5.0",
     "expo": "~53.0.9",
+    "expo-constants": "~17.1.6",
     "expo-status-bar": "~2.2.3",
     "formik": "^2.4.6",
     "graphql": "^16.11.0",
