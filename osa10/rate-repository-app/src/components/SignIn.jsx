@@ -5,6 +5,9 @@ import * as yup from 'yup';
 import Text from './Text';
 import theme from '../theme';
 import useSignIn from '../hooks/useSignIn';
+import AuthStorage from '../utils/authStorage';
+
+const storage = new AuthStorage();
 
 const initialValues = {
   username: '',
@@ -30,7 +33,10 @@ const SignIn = () => {
 
     try {
       const { data } = await signIn({ username, password });
-      console.log(data);
+      await storage.setAccessToken(data.authenticate.accessToken);
+      console.log(await storage.getAccessToken());
+      await storage.removeAccessToken();
+      console.log(await storage.getAccessToken());
     } catch (e) {
       console.log(e);
     }
