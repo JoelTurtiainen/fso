@@ -6,8 +6,6 @@ import theme from '../theme';
 import AppBar from './AppBar';
 import SignIn from './SignIn';
 
-
-
 const Main = () => {
   return (
     <View style={styles.container}>

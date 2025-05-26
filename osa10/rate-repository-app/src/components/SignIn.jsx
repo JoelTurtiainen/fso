@@ -4,11 +4,12 @@ import * as yup from 'yup';
 
 import Text from './Text';
 import theme from '../theme';
+import useSignIn from '../hooks/useSignIn';
 
 const initialValues = {
   username: '',
   password: '',
-}
+};
 
 const validationSchema = yup.object().shape({
   username: yup
@@ -18,23 +19,31 @@ const validationSchema = yup.object().shape({
   password: yup
     .string()
     .min(8, 'Password must be greater or equal to 8')
-    .required('Password is a required field')
-})
-
-const onSubmit = (values) => {
-  alert(JSON.stringify(values, null, 2));
-}
+    .required('Password is a required field'),
+});
 
 const SignIn = () => {
+  const [signIn] = useSignIn();
+
+  const onSubmit = async (values) => {
+    const { username, password } = values;
+
+    try {
+      const { data } = await signIn({ username, password });
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const formik = useFormik({
     initialValues,
     validationSchema,
-    onSubmit
+    onSubmit,
   });
 
-  const isInvalid = (key) => (
-    Boolean(formik?.touched[key] && formik?.errors[key])
-  )
+  const isInvalid = (key) =>
+    Boolean(formik?.touched[key] && formik?.errors[key]);
 
   return (
     <View style={styles.container}>
@@ -57,7 +66,10 @@ const SignIn = () => {
       {isInvalid('password') && (
         <Text style={styles.error}>{formik.errors.password}</Text>
       )}
-      <Pressable style={[styles.input, styles.button]} onPress={formik.handleSubmit}>
+      <Pressable
+        style={[styles.input, styles.button]}
+        onPress={formik.handleSubmit}
+      >
         <Text fontWeight="bold" color="bgPrimary">
           Sign in
         </Text>
@@ -85,14 +97,13 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   errorBorder: {
-    borderColor: theme.colors.error
+    borderColor: theme.colors.error,
   },
   error: {
     color: theme.colors.error,
     marginHorizontal: 10,
     padding: 3,
   },
-
 });
 
 export default SignIn;
