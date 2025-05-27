@@ -5,13 +5,12 @@ import * as yup from 'yup';
 import Text from './Text';
 import theme from '../theme';
 import useSignIn from '../hooks/useSignIn';
-import AuthStorage from '../utils/authStorage';
-
-const storage = new AuthStorage();
+import useAuthStorage from '../hooks/useAuthStorage';
+import { useNavigate } from 'react-router-native';
 
 const initialValues = {
-  username: '',
-  password: '',
+  username: 'kalle',
+  password: 'password',
 };
 
 const validationSchema = yup.object().shape({
@@ -26,17 +25,15 @@ const validationSchema = yup.object().shape({
 });
 
 const SignIn = () => {
+  const authStorage = useAuthStorage();
+  const navigate = useNavigate();
   const [signIn] = useSignIn();
 
   const onSubmit = async (values) => {
     const { username, password } = values;
-
+    await signIn({ username, password });
+    navigate('/');
     try {
-      const { data } = await signIn({ username, password });
-      await storage.setAccessToken(data.authenticate.accessToken);
-      console.log(await storage.getAccessToken());
-      await storage.removeAccessToken();
-      console.log(await storage.getAccessToken());
     } catch (e) {
       console.log(e);
     }
