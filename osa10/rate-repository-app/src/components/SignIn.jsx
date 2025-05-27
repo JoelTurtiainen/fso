@@ -9,8 +9,8 @@ import useAuthStorage from '../hooks/useAuthStorage';
 import { useNavigate } from 'react-router-native';
 
 const initialValues = {
-  username: 'kalle',
-  password: 'password',
+  username: '',
+  password: '',
 };
 
 const validationSchema = yup.object().shape({
@@ -25,7 +25,6 @@ const validationSchema = yup.object().shape({
 });
 
 const SignIn = () => {
-  const authStorage = useAuthStorage();
   const navigate = useNavigate();
   const [signIn] = useSignIn();
 
