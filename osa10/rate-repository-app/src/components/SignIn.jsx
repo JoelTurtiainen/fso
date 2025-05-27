@@ -5,7 +5,6 @@ import * as yup from 'yup';
 import Text from './Text';
 import theme from '../theme';
 import useSignIn from '../hooks/useSignIn';
-import useAuthStorage from '../hooks/useAuthStorage';
 import { useNavigate } from 'react-router-native';
 
 const initialValues = {
@@ -24,20 +23,7 @@ const validationSchema = yup.object().shape({
     .required('Password is a required field'),
 });
 
-const SignIn = () => {
-  const navigate = useNavigate();
-  const [signIn] = useSignIn();
-
-  const onSubmit = async (values) => {
-    const { username, password } = values;
-    await signIn({ username, password });
-    navigate('/');
-    try {
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
+export const SignInContainer = ({ onSubmit }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
@@ -78,6 +64,23 @@ const SignIn = () => {
       </Pressable>
     </View>
   );
+};
+
+const SignIn = () => {
+  const navigate = useNavigate();
+  const [signIn] = useSignIn();
+
+  const onSubmit = async (values) => {
+    const { username, password } = values;
+    await signIn({ username, password });
+    navigate('/');
+    try {
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  return <SignInContainer onSubmit={onSubmit} />;
 };
 
 const styles = StyleSheet.create({
