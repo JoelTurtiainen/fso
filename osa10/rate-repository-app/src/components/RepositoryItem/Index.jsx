@@ -3,10 +3,8 @@ import theme from '../../theme';
 import Header from './Header';
 import Stats from './Stats';
 
-
-
 const RepositoryItem = ({ data }) => (
-  <View style={styles.container}>
+  <View testID="repositoryItem" style={styles.container}>
     <Header data={data} />
     <Stats data={data} />
   </View>
