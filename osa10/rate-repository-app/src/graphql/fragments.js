@@ -13,3 +13,22 @@ export const REPO_FRAGMENT = gql`
     ratingAverage
   }
 `;
+
+export const REVIEW_FRAGMENT = gql`
+  fragment ReviewFragment on Repository {
+    reviews {
+      edges {
+        node {
+          id
+          text
+          rating
+          createdAt
+          user {
+            id
+            username
+          }
+        }
+      }
+    }
+  }
+`;
