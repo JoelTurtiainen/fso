@@ -30,6 +30,11 @@ const AppBar = () => {
             Repositories
           </Text>
         </Link>
+        <Link to="/newreview" style={styles.link}>
+          <Text fontWeight="bold" color="bgPrimary">
+            Create a review
+          </Text>
+        </Link>
         {meObj && meObj.hasOwnProperty('me') && meObj.me !== null ? (
           <Link onPress={onSignOut} style={styles.link}>
             <Text fontWeight="bold" color="bgPrimary">
