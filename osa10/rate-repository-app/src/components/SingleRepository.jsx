@@ -37,12 +37,7 @@ const SingleRepository = () => {
   const { reviews, loading: reviewsLoading } = useReviews(repoId);
   const { repository, loading: repositoryLoading } = useRepository(repoId);
 
-  if (reviewsLoading && repositoryLoading) return;
-
-  if (reviews.length === 0) {
-    console.log('bruh');
-    return <RepositoryInfo repository={repository} />;
-  }
+  if (reviewsLoading || repositoryLoading) return <Text>Loading...</Text>;
 
   return (
     <FlatList

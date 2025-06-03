@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { GET_REPOSITORY_REVIEWS } from '../graphql/queries';
 
 const useReviews = ({ id }) => {
-  const { loading, error, data } = useQuery(GET_REPOSITORY_REVIEWS, {
+  const { loading, data } = useQuery(GET_REPOSITORY_REVIEWS, {
     variables: { id },
   });
 
@@ -10,7 +10,6 @@ const useReviews = ({ id }) => {
     ? data.repository.reviews.edges.map((edge) => edge.node)
     : [];
 
-  console.log(reviews);
   return { reviews, loading };
 };
 
