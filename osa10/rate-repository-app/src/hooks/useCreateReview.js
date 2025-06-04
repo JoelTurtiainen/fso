@@ -5,7 +5,6 @@ import useAuthStorage from '../hooks/useAuthStorage';
 const useCreateReview = () => {
   const authStorage = useAuthStorage();
   const [mutate, result] = useMutation(CREATE_REVIEW);
-  const apolloClient = useApolloClient();
 
   const create = async ({ repositoryName, ownerName, rating, text }) => {
     const accessToken = await authStorage.getAccessToken();

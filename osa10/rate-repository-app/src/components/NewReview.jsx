@@ -7,10 +7,10 @@ import theme from '../theme';
 import Text from './Text';
 
 const initialValues = {
-  repositoryName: 'lombok',
-  ownerName: 'rzwitserloot',
-  rating: 100,
-  text: 'bruh',
+  repositoryName: '',
+  ownerName: '',
+  rating: '',
+  text: '',
 };
 
 const validationSchema = yup.object().shape({
@@ -62,19 +62,16 @@ export const NewReviewContainer = ({ onSubmit, errorMessage = '' }) => {
       <TextInput
         onChangeText={formik.handleChange('rating')}
         placeholder="Rating 0-100"
-        style={[
-          styles.input,
-          isInvalid('repositoryName') && styles.errorBorder,
-        ]}
+        style={[styles.input, isInvalid('rating') && styles.errorBorder]}
         value={formik.values.rating}
       />
+      {isInvalid('rating') && (
+        <Text style={styles.error}>{formik.errors.rating}</Text>
+      )}
       <TextInput
         onChangeText={formik.handleChange('text')}
-        placeholder="Review"
-        style={[
-          styles.input,
-          isInvalid('repositoryName') && styles.errorBorder,
-        ]}
+        placeholder="Review (Optional)"
+        style={[styles.input, isInvalid('text') && styles.errorBorder]}
         value={formik.values.text}
       />
       {errorMessage && (

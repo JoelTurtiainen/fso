@@ -22,6 +22,8 @@ const AppBar = () => {
     apolloClient.resetStore();
   };
 
+  const loggedIn = meObj && meObj.hasOwnProperty('me') && meObj.me !== null;
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal>
@@ -30,23 +32,32 @@ const AppBar = () => {
             Repositories
           </Text>
         </Link>
-        <Link to="/newreview" style={styles.link}>
-          <Text fontWeight="bold" color="bgPrimary">
-            Create a review
-          </Text>
-        </Link>
-        {meObj && meObj.hasOwnProperty('me') && meObj.me !== null ? (
-          <Link onPress={onSignOut} style={styles.link}>
-            <Text fontWeight="bold" color="bgPrimary">
-              Sign out
-            </Text>
-          </Link>
+        {loggedIn ? (
+          <>
+            <Link to="/newreview" style={styles.link}>
+              <Text fontWeight="bold" color="bgPrimary">
+                Create a review
+              </Text>
+            </Link>
+            <Link onPress={onSignOut} style={styles.link}>
+              <Text fontWeight="bold" color="bgPrimary">
+                Sign out
+              </Text>
+            </Link>
+          </>
         ) : (
-          <Link to="/signin" style={styles.link}>
-            <Text fontWeight="bold" color="bgPrimary">
-              Sign in
-            </Text>
-          </Link>
+          <>
+            <Link to="/signin" style={styles.link}>
+              <Text fontWeight="bold" color="bgPrimary">
+                Sign in
+              </Text>
+            </Link>
+            <Link to="/signup" style={styles.link}>
+              <Text fontWeight="bold" color="bgPrimary">
+                Sign up
+              </Text>
+            </Link>
+          </>
         )}
       </ScrollView>
     </View>
