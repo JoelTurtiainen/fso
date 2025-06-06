@@ -96,10 +96,10 @@ const NewReview = () => {
   const errorMessage = result?.error?.message ? result.error.message : null;
 
   const onSubmit = async (values) => {
-    console.log(result);
-    await create(values);
-    navigate(`/${values.ownerName}.${values.repositoryName}`);
     try {
+      console.log(result);
+      await create({ ...values, rating: Number(values.rating) });
+      navigate(`/${values.ownerName}.${values.repositoryName}`);
     } catch (e) {
       console.log(e);
     }
