@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { Link } from 'react-router-native';
+import { Link, useNavigate } from 'react-router-native';
 import Constants from 'expo-constants';
 import Text from './Text';
 import theme from '../theme';
@@ -9,6 +9,7 @@ import { useApolloClient, useQuery } from '@apollo/client';
 import useAuthStorage from '../hooks/useAuthStorage';
 
 const AppBar = () => {
+  const navigate = useNavigate();
   const apolloClient = useApolloClient();
   const authStorage = useAuthStorage();
   const { data: currentUserObject } = useQuery(GET_CURRENT_USER, {
@@ -17,9 +18,10 @@ const AppBar = () => {
     },
   });
 
-  const onSignOut = async () => {
+  const onSignOut = async (navigate) => {
     await authStorage.removeAccessToken();
     apolloClient.resetStore();
+    navigate('/');
   };
 
   const loggedIn =
@@ -47,7 +49,7 @@ const AppBar = () => {
                 My reviews
               </Text>
             </Link>
-            <Link onPress={onSignOut} style={styles.link}>
+            <Link onPress={() => onSignOut(navigate)} style={styles.link}>
               <Text fontWeight="bold" color="bgPrimary">
                 Sign out
               </Text>

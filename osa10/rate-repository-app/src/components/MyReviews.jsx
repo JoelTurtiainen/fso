@@ -9,20 +9,21 @@ const ItemSeparator = () => <View style={styles.separator} />;
 
 const MyReviews = () => {
   const authStorage = useAuthStorage();
-  const { data: currentUserObject, loading: currentUserLoading } = useQuery(
-    GET_CURRENT_USER,
-    {
-      context: {
-        headers: { authorization: `Bearer ${authStorage.getAccessToken()}` },
-      },
-      variables: {
-        includeReviews: true,
-      },
-    }
-  );
+  const {
+    data: currentUserObject,
+    loading: currentUserLoading,
+    refetch,
+  } = useQuery(GET_CURRENT_USER, {
+    context: {
+      headers: { authorization: `Bearer ${authStorage.getAccessToken()}` },
+    },
+    variables: {
+      includeReviews: true,
+    },
+  });
 
-  if (currentUserLoading) return <Text>Loading...</Text>;
-  console.log(currentUserObject.me.reviews);
+  if (!currentUserObject?.me || currentUserLoading)
+    return <Text>Loading...</Text>;
 
   const reviewNodes = currentUserObject.me.reviews
     ? currentUserObject.me.reviews.edges.map((edge) => edge.node)
@@ -31,7 +32,7 @@ const MyReviews = () => {
   return (
     <FlatList
       data={reviewNodes}
-      renderItem={({ item }) => <ReviewItem review={item} />}
+      renderItem={({ item }) => <ReviewItem review={item} refetch={refetch} />}
       keyExtractor={({ id }) => id}
       ItemSeparatorComponent={ItemSeparator}
     />

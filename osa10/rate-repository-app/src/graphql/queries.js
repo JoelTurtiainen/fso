@@ -54,6 +54,7 @@ export const GET_CURRENT_USER = gql`
           node {
             repository {
               fullName
+              id
             }
             id
             text
