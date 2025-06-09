@@ -4,14 +4,14 @@ import Constants from 'expo-constants';
 import Text from './Text';
 import theme from '../theme';
 import { ScrollView } from 'react-native';
-import { GET_ME } from '../graphql/queries';
+import { GET_CURRENT_USER } from '../graphql/queries';
 import { useApolloClient, useQuery } from '@apollo/client';
 import useAuthStorage from '../hooks/useAuthStorage';
 
 const AppBar = () => {
   const apolloClient = useApolloClient();
   const authStorage = useAuthStorage();
-  const { data: meObj } = useQuery(GET_ME, {
+  const { data: currentUserObject } = useQuery(GET_CURRENT_USER, {
     context: {
       headers: { authorization: `Bearer ${authStorage.getAccessToken()}` },
     },
@@ -22,7 +22,10 @@ const AppBar = () => {
     apolloClient.resetStore();
   };
 
-  const loggedIn = meObj && meObj.hasOwnProperty('me') && meObj.me !== null;
+  const loggedIn =
+    currentUserObject &&
+    currentUserObject.hasOwnProperty('me') &&
+    currentUserObject.me !== null;
 
   return (
     <View style={styles.container}>
@@ -37,6 +40,11 @@ const AppBar = () => {
             <Link to="/newreview" style={styles.link}>
               <Text fontWeight="bold" color="bgPrimary">
                 Create a review
+              </Text>
+            </Link>
+            <Link to="/myreviews" style={styles.link}>
+              <Text fontWeight="bold" color="bgPrimary">
+                My reviews
               </Text>
             </Link>
             <Link onPress={onSignOut} style={styles.link}>

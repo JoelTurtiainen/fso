@@ -8,6 +8,7 @@ import SignIn from './SignIn';
 import SingleRepository from './SingleRepository';
 import NewReview from './NewReview';
 import SignUp from './SignUp';
+import MyReviews from './MyReviews';
 
 const Main = () => {
   return (
@@ -15,6 +16,7 @@ const Main = () => {
       <AppBar />
       <Routes>
         <Route path="/newreview" element={<NewReview />} />
+        <Route path="/myreviews" element={<MyReviews />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<RepositoryList />} />
