@@ -1,16 +1,17 @@
 import { gql } from '@apollo/client';
-import {
-  REPO_FRAGMENT,
-  REPO_LINK_FRAGMENT,
-  REVIEW_FRAGMENT,
-} from './fragments';
+import { REPO_FRAGMENT, REVIEW_FRAGMENT } from './fragments';
 
 export const GET_REPOSITORIES = gql`
-  query Query(
+  query Repositories(
     $orderBy: AllRepositoriesOrderBy
     $orderDirection: OrderDirection
+    $searchKeyword: String
   ) {
-    repositories(orderBy: $orderBy, orderDirection: $orderDirection) {
+    repositories(
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      searchKeyword: $searchKeyword
+    ) {
       edges {
         node {
           ...RepoFragment
