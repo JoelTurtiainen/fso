@@ -1,5 +1,9 @@
 import { gql } from '@apollo/client';
-import { REPO_FRAGMENT, REVIEW_FRAGMENT } from './fragments';
+import {
+  REPO_FRAGMENT,
+  REVIEW_CONNECTION_FRAGMENT,
+  REVIEW_FRAGMENT,
+} from './fragments';
 
 export const GET_REPOSITORIES = gql`
   query Repositories(
@@ -44,14 +48,22 @@ export const GET_REPOSITORY = gql`
 `;
 
 export const GET_REPOSITORY_REVIEWS = gql`
-  query Repository($id: ID!) {
+  query Repository($id: ID!, $after: String, $first: Int) {
     repository(id: $id) {
       id
       fullName
-      ...ReviewFragment
+      reviews(first: $first, after: $after) {
+        totalCount
+        ...ReviewConnectionFragment
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
+        }
+      }
     }
   }
-  ${REVIEW_FRAGMENT}
+  ${REVIEW_CONNECTION_FRAGMENT}
 `;
 
 export const GET_CURRENT_USER = gql`
