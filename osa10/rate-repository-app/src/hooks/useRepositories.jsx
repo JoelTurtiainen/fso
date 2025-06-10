@@ -19,7 +19,7 @@ const sortVariables = {
 const useRepositories = (variables) => {
   const { data, loading, fetchMore, ...result } = useQuery(GET_REPOSITORIES, {
     variables: {
-      sortvariables: sortVariables[variables.sortQuery],
+      ...sortVariables[variables.sortQuery],
       ...variables,
     },
   });
