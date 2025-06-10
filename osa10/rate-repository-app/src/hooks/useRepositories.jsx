@@ -16,12 +16,33 @@ const sortVariables = {
   },
 };
 
-const useRepositories = ({ sortQuery, searchKeyword }) => {
-  const { loading, error, data } = useQuery(GET_REPOSITORIES, {
-    variables: { ...sortVariables[sortQuery], searchKeyword },
+const useRepositories = (variables) => {
+  const { data, loading, fetchMore, ...result } = useQuery(GET_REPOSITORIES, {
+    variables: {
+      sortvariables: sortVariables[variables.sortQuery],
+      ...variables,
+    },
   });
 
-  return { ...data, loading };
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repositories.pageInfo.hasNextPage;
+
+    if (!canFetchMore) return;
+
+    fetchMore({
+      variables: {
+        after: data.repositories.pageInfo.endCursor,
+        ...variables,
+      },
+    });
+  };
+
+  return {
+    repositories: data?.repositories,
+    fetchMore: handleFetchMore,
+    loading,
+    ...result,
+  };
 };
 
 export default useRepositories;

@@ -23,6 +23,12 @@ export class RepositoryListContainer extends Component {
     );
   };
 
+  onEndReach = () => {
+    const { fetchMore } = this.props;
+    fetchMore();
+    console.log('You have reached the end of the list');
+  };
+
   render() {
     const { repositories, navigate } = this.props;
 
@@ -39,6 +45,7 @@ export class RepositoryListContainer extends Component {
             <RepositoryItem data={item} />
           </Pressable>
         )}
+        onEndReached={repositoryNodes.length && this.onEndReach}
         ListHeaderComponent={this.renderHeader}
       />
     );
@@ -51,19 +58,21 @@ const RepositoryList = () => {
   const [sortQuery, setSortQuery] = useState('latest');
   const [searchKeyword] = useDebounce(searchQuery, 500);
 
-  const { repositories } = useRepositories({
+  const { repositories, fetchMore } = useRepositories({
+    first: 8,
     sortQuery,
     searchKeyword,
   });
 
   return (
     <RepositoryListContainer
-      repositories={repositories}
       navigate={navigate}
-      sortQuery={sortQuery}
-      setSortQuery={setSortQuery}
+      fetchMore={fetchMore}
+      repositories={repositories}
       searchQuery={searchQuery}
       setSearchQuery={setSearchQuery}
+      setSortQuery={setSortQuery}
+      sortQuery={sortQuery}
     />
   );
 };
