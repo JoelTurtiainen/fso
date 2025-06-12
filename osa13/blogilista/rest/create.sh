@@ -1,4 +1,4 @@
 curl -s -i -X POST \
-  'http://localhost:3001/api/notes' \
+  'http://localhost:3001/api/blogs' \
   -H 'Content-Type: application/json' \
-  -d '{"content": "test", "important": 17}' \
+  -d '{"author": "Robert C. Martin", "url": "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html", "title": "First class test" }' \
