@@ -1,7 +1,10 @@
 const Sequelize = require("sequelize");
+const log = require("sequelize-pretty-logger")();
 const { DATABASE_URL } = require("./config");
 
-const sequelize = new Sequelize(DATABASE_URL);
+const sequelize = new Sequelize(DATABASE_URL, {
+  logging: log,
+});
 
 const connectToDatabase = async () => {
   try {
