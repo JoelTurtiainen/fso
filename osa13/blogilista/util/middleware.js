@@ -16,11 +16,23 @@ const unknownEndpoint = (_request, res) => {
 const errorHandler = (error, _req, res, next) => {
   logger.info("error.name", error.name);
   logger.error("error.message", error.message);
+  logger.info("error", error);
 
-  if (error.name === "SyntaxError") {
-    return res.status(400).send({ error: error.message });
-  } else if (error.name === "SequelizeDatabaseError") {
-    return res.status(400).json({ error: error.message });
+  switch (error.name) {
+    case "SyntaxError":
+      return res.status(400).send({ error: error.message });
+    case "SequelizeDatabaseError":
+      return res.status(400).json({ error: error.message });
+    case "SequelizeValidationError":
+      const { validatorKey, path } = error.errors[0];
+      return res.status(400).json({
+        error: [`Validation ${validatorKey} on ${path} failed`],
+      });
+    case "SequelizeUniqueConstraintError":
+      return res.status(400).json({ error: error.errors[0].message });
+
+    default:
+      break;
   }
 
   next(error);
