@@ -1,4 +1,3 @@
-const { DataTypes } = require("sequelize");
 const { Blog } = require("../models");
 const { sequelize } = require("../util/db");
 

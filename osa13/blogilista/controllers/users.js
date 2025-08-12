@@ -1,6 +1,7 @@
 const router = require("express").Router();
 
 const { User, Blog } = require("../models");
+const { isAdmin, tokenExtractor } = require("../util/middleware");
 
 const userFinder = async (req, res, next) => {
   req.user = await User.findOne({ where: { username: req.params.username } });
@@ -34,14 +35,30 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:username", userFinder, async (req, res, next) => {
-  try {
-    req.user.username = req.body.username;
-    await req.user.save();
-    res.json({ username: req.user.username });
-  } catch (error) {
-    next(error);
-  }
-});
+// router.put("/:username", userFinder, async (req, res, next) => {
+//   try {
+//     req.user.username = req.body.username;
+//     await req.user.save();
+//     res.json({ username: req.user.username });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+router.put(
+  "/:username",
+  userFinder,
+  tokenExtractor,
+  isAdmin,
+  async (req, res) => {
+    if (req.user) {
+      req.user.disabled = req.body.disabled;
+      await req.user.save();
+      res.json(req.user);
+    } else {
+      res.status(404).end();
+    }
+  },
+);
 
 module.exports = router;
