@@ -1,4 +1,4 @@
 curl -s -i -X PUT \
-  'http://localhost:3001/api/blogs/9' \
+  'http://localhost:3001/api/blogs/1' \
   -H 'Content-Type: application/json' \
-  -d '{"likes": 9}' \
+  -d '{"year": 1990}' \

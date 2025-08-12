@@ -88,9 +88,19 @@ router.delete("/:id", tokenExtractor, blogFinder, async (req, res, next) => {
 
 router.put("/:id", blogFinder, async (req, res, next) => {
   try {
-    req.blog.likes = req.body.likes;
+    if (req?.body.likes) {
+      req.blog.likes = req.body.likes;
+    }
+
+    if (req?.body.year) {
+      req.blog.year = req.body.year;
+    }
+
     await req.blog.save();
-    res.json({ likes: req.blog.likes });
+    res.json({
+      ...(req.body.likes && { likes: req.blog.likes }),
+      ...(req.body.year && { year: req.blog.year }),
+    });
   } catch (error) {
     next(error);
   }
