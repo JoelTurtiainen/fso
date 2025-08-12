@@ -1,4 +1,4 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Sequelize } = require("sequelize");
 
 module.exports = {
   up: async ({ context: queryInterface }) => {
@@ -23,6 +23,14 @@ module.exports = {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.fn("NOW"),
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.fn("NOW"),
+      },
     });
     await queryInterface.createTable("users", {
       id: {
@@ -39,6 +47,14 @@ module.exports = {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.fn("NOW"),
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.fn("NOW"),
       },
     });
     await queryInterface.addColumn("blogs", "user_id", {
