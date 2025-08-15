@@ -1,5 +1,6 @@
 const router = require("express").Router();
 
+const { Op } = require("sequelize");
 const { User, Blog, ReadingList } = require("../models");
 const { isAdmin, tokenExtractor } = require("../util/middleware");
 
@@ -14,10 +15,19 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  let user;
-  // Search with ID
-  if (!isNaN(req.params.id)) {
-    user = await User.findByPk(req.params.id, {
+  let where = {};
+  const { read } = req.query;
+
+  if (read === "true" || read === "false") {
+    where = {
+      read: {
+        [Op.eq]: read,
+      },
+    };
+  }
+
+  try {
+    const user = await User.findByPk(req.params.id, {
       attributes: ["name", "username"],
       include: [
         {
@@ -29,48 +39,17 @@ router.get("/:id", async (req, res) => {
             {
               model: ReadingList,
               attributes: ["read", "id"],
+              where,
             },
           ],
         },
       ],
     });
-  } else {
-    // Search with Username
-    user = await User.findOne({
-      where: { username: req.params.id },
-      attributes: { exclude: [""] },
-      include: [
-        { model: Blog, attributes: { exclude: ["userId"] } },
-        {
-          model: Blog,
-          as: "readings",
-          attributes: { exclude: ["userId"] },
-          through: {
-            attributes: [],
-          },
-          // include: {
-          //   model: User,
-          //   attributes: ["name"],
-          // },
-        },
-      ],
-    });
-  }
-
-  if (user) {
     res.json(user);
-  } else {
+  } catch (err) {
     res.status(404).end();
   }
 });
-
-// router.get("/:id", async (req, res) => {
-//   if (user) {
-//     res.json(user);
-//   } else {
-//     res.status(404).end();
-//   }
-// });
 
 router.post("/", async (req, res, next) => {
   try {
