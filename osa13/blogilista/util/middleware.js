@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { User } = require("../models");
+const { User, Session } = require("../models");
 const { SECRET } = require("./config");
 const logger = require("./logger");
 
@@ -41,12 +41,26 @@ const errorHandler = (error, _req, res, next) => {
   next(error);
 };
 
-const tokenExtractor = (req, res, next) => {
+const tokenExtractor = async (req, res, next) => {
   const authorization = req.get("authorization");
   console.log(authorization);
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
     try {
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET);
+      const token = authorization.substring(7);
+      const decodedToken = jwt.verify(token, SECRET);
+      const session = await Session.findOne({
+        where: { token },
+        include: { model: User, attributes: ["disabled"] },
+      });
+
+      if (session.user.disabled) {
+        return res.status(401).json({ error: "user disabled" });
+      }
+
+      if (!session) {
+        return res.status(401).json({ error: "token expired" });
+      }
+      req.decodedToken = decodedToken;
     } catch (e) {
       console.log(e);
       return res.status(401).json({ error: "token invalid" });
@@ -58,9 +72,13 @@ const tokenExtractor = (req, res, next) => {
 };
 
 const isAdmin = async (req, res, next) => {
-  const user = await User.findByPk(req.decodedToken.id);
-  if (!user.admin) {
-    return res.status(401).json({ error: "operation not permitted" });
+  try {
+    const user = await User.findByPk(req.decodedToken.id);
+    if (!user.admin) {
+      return res.status(401).json({ error: "operation not permitted" });
+    }
+  } catch (e) {
+    console.log(e);
   }
   next();
 };

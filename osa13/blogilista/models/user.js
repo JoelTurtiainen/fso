@@ -35,6 +35,18 @@ User.init(
     underscored: true,
     timestamps: true,
     modelName: "user",
+    scopes: {
+      admin: {
+        where: {
+          admin: true,
+        },
+      },
+      disabled: {
+        where: {
+          disabled: true,
+        },
+      },
+    },
   },
 );
 
